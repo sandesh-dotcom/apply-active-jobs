@@ -193,8 +193,12 @@
   .jd-text {
     font-size: 14px;
     line-height: 1.65;
-    white-space: pre-wrap;
   }
+  .jd-text p { margin: 0 0 10px; }
+  .jd-text p:last-child { margin-bottom: 0; }
+  .jd-text ul, .jd-text ol { margin: 0 0 10px 20px; padding: 0; }
+  .jd-text li { margin-bottom: 4px; }
+  .jd-text strong { font-weight: 700; color: var(--ink); }
 
   .primary-btn {
     display: block;
@@ -412,6 +416,48 @@
 
   function esc(s) { return String(s || ""); }
 
+  function escapeHtml(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function inlineFormat(s) {
+    return s
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.+?)\*/g, "<em>$1</em>");
+  }
+
+  // Renders the lightweight markdown subset from the admin JD editor:
+  // **bold**, *italic*, "- " bullet lists, "1. " numbered lists.
+  function renderJd(raw) {
+    const lines = escapeHtml(raw).split("\n");
+    let html = "";
+    let listType = null;
+
+    function closeList() {
+      if (listType) { html += "</" + listType + ">"; listType = null; }
+    }
+
+    lines.forEach(function (line) {
+      const bullet = line.match(/^-\s+(.*)/);
+      const numbered = line.match(/^\d+\.\s+(.*)/);
+      if (bullet) {
+        if (listType !== "ul") { closeList(); html += "<ul>"; listType = "ul"; }
+        html += "<li>" + inlineFormat(bullet[1]) + "</li>";
+      } else if (numbered) {
+        if (listType !== "ol") { closeList(); html += "<ol>"; listType = "ol"; }
+        html += "<li>" + inlineFormat(numbered[1]) + "</li>";
+      } else {
+        closeList();
+        if (line.trim() !== "") html += "<p>" + inlineFormat(line) + "</p>";
+      }
+    });
+    closeList();
+    return html;
+  }
+
   // ── Load jobs ──
   async function loadJobs() {
     const list = document.getElementById("jobList");
@@ -545,7 +591,9 @@
     if (job.languages) addRow("🗣️", job.languages);
     if (job.map_link) addRow("🗺️", "View location on map", true, job.map_link);
 
-    document.getElementById("dJd").textContent = job.jd || "Details will be shared during the call.";
+    document.getElementById("dJd").innerHTML = job.jd
+      ? renderJd(job.jd)
+      : "Details will be shared during the call.";
     show("detailView");
   }
 

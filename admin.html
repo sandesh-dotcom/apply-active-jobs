@@ -202,6 +202,21 @@
     text-decoration: underline;
   }
 
+  .jd-toolbar { display: flex; gap: 6px; margin-bottom: 8px; }
+  .jd-toolbar button {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .jd-toolbar button:hover { background: var(--line); }
+  .jd-toolbar button i { font-style: italic; }
+
   .empty { font-size: 13px; color: var(--muted); text-align: center; padding: 16px 0; }
 
   .topbar {
@@ -298,7 +313,14 @@
 
     <div class="field">
       <label for="jJd">Job description</label>
+      <div class="jd-toolbar">
+        <button type="button" onclick="wrapSelection('**','**')" title="Bold"><b>B</b></button>
+        <button type="button" onclick="wrapSelection('*','*')" title="Italic"><i>I</i></button>
+        <button type="button" onclick="prefixLines('- ')" title="Bullet list">• List</button>
+        <button type="button" onclick="prefixLines('1. ')" title="Numbered list">1. List</button>
+      </div>
       <textarea id="jJd" placeholder="Role details, shift, requirements, interview process..."></textarea>
+      <div class="hint" style="margin-top:6px;">Select text and click a button, or type **bold**, *italic*, "- " for bullets, "1. " for a numbered list.</div>
     </div>
 
     <button class="primary-btn" id="addBtn" onclick="saveJob()">Add job</button>
@@ -467,6 +489,38 @@
 
       rows.appendChild(row);
     });
+  }
+
+  // ── Job description formatting toolbar ──
+  function wrapSelection(prefix, suffix) {
+    const ta = document.getElementById("jJd");
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const value = ta.value;
+    const selected = value.slice(start, end) || "text";
+    ta.value = value.slice(0, start) + prefix + selected + suffix + value.slice(end);
+    ta.focus();
+    const cursorStart = start + prefix.length;
+    ta.setSelectionRange(cursorStart, cursorStart + selected.length);
+  }
+
+  function prefixLines(prefix) {
+    const ta = document.getElementById("jJd");
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const value = ta.value;
+    const lineStart = value.lastIndexOf("\n", start - 1) + 1;
+    let lineEnd = value.indexOf("\n", end);
+    if (lineEnd === -1) lineEnd = value.length;
+    const block = value.slice(lineStart, lineEnd);
+    let n = 1;
+    const newBlock = block.split("\n").map(function (line) {
+      const stripped = line.replace(/^(\d+\.\s+|-\s+)/, "");
+      return prefix === "1. " ? (n++) + ". " + stripped : prefix + stripped;
+    }).join("\n");
+    ta.value = value.slice(0, lineStart) + newBlock + value.slice(lineEnd);
+    ta.focus();
+    ta.setSelectionRange(lineStart, lineStart + newBlock.length);
   }
 
   let editingId = null;

@@ -146,6 +146,22 @@
     font-size: 11px;
   }
 
+  .row-actions { flex: none; display: flex; gap: 8px; }
+
+  .edit-btn {
+    flex: none;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+  }
+  .edit-btn:hover { background: var(--bg); }
+
   .delete-btn {
     flex: none;
     font-family: inherit;
@@ -159,6 +175,32 @@
     cursor: pointer;
   }
   .delete-btn:hover { background: #fef2f2; }
+
+  .type-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 8px;
+    margin-right: 6px;
+    border-radius: 999px;
+    background: rgba(59,130,246,0.10);
+    color: #1d4ed8;
+    border: 1px solid rgba(59,130,246,0.25);
+  }
+
+  .cancel-edit-btn {
+    display: none;
+    width: 100%;
+    margin-top: 10px;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: underline;
+  }
 
   .empty { font-size: 13px; color: var(--muted); text-align: center; padding: 16px 0; }
 
@@ -201,8 +243,8 @@
     <button class="logout-btn" onclick="logout()">Log out</button>
   </div>
 
-  <div class="card">
-    <div class="card-title">Add a new job</div>
+  <div class="card" id="formCard">
+    <div class="card-title" id="formTitle">Add a new job</div>
 
     <div class="field">
       <label for="jTitle">Job title</label>
@@ -231,13 +273,22 @@
 
     <div class="grid-2">
       <div class="field">
+        <label for="jType">Job type</label>
+        <select id="jType">
+          <option value="Voice" selected>Voice</option>
+          <option value="Non-Voice">Non-Voice</option>
+          <option value="Voice + Chat">Voice + Chat</option>
+        </select>
+      </div>
+      <div class="field">
         <label for="jSalary">Salary <span class="hint">(shown with ₹)</span></label>
         <input type="text" id="jSalary" placeholder="e.g. 18,000 – 22,000 / month">
       </div>
-      <div class="field">
-        <label for="jLanguages">Languages needed <span class="hint">(comma separated)</span></label>
-        <input type="text" id="jLanguages" placeholder="e.g. English, Hindi">
-      </div>
+    </div>
+
+    <div class="field">
+      <label for="jLanguages">Languages needed <span class="hint">(comma separated)</span></label>
+      <input type="text" id="jLanguages" placeholder="e.g. English, Hindi">
     </div>
 
     <div class="field">
@@ -250,7 +301,8 @@
       <textarea id="jJd" placeholder="Role details, shift, requirements, interview process..."></textarea>
     </div>
 
-    <button class="primary-btn" id="addBtn" onclick="addJob()">Add job</button>
+    <button class="primary-btn" id="addBtn" onclick="saveJob()">Add job</button>
+    <button class="cancel-edit-btn" id="cancelEditBtn" onclick="cancelEdit()">Cancel edit</button>
     <div class="error-box" id="addError"></div>
     <div class="ok-box" id="addOk"></div>
   </div>
@@ -371,6 +423,13 @@
       title.textContent = job.title;
       info.appendChild(title);
 
+      if (job.job_type) {
+        const type = document.createElement("span");
+        type.className = "type-tag";
+        type.textContent = job.job_type;
+        info.appendChild(type);
+      }
+
       const meta = document.createElement("div");
       meta.className = "job-row-meta";
       const parts = [];
@@ -389,23 +448,67 @@
       info.appendChild(idLine);
       row.appendChild(info);
 
+      const actions = document.createElement("div");
+      actions.className = "row-actions";
+
+      const edit = document.createElement("button");
+      edit.className = "edit-btn";
+      edit.textContent = "Edit";
+      edit.onclick = function () { startEdit(job); };
+      actions.appendChild(edit);
+
       const del = document.createElement("button");
       del.className = "delete-btn";
       del.textContent = "Remove";
       del.onclick = function () { deleteJob(job); };
-      row.appendChild(del);
+      actions.appendChild(del);
+
+      row.appendChild(actions);
 
       rows.appendChild(row);
     });
   }
 
-  async function addJob() {
+  let editingId = null;
+
+  function startEdit(job) {
+    editingId = job.id;
+    document.getElementById("jTitle").value = job.title || "";
+    document.getElementById("jUuid").value = job.job_uuid || "";
+    document.getElementById("jLocation").value = job.location || "";
+    document.getElementById("jMode").value = job.mode || "In Office";
+    document.getElementById("jType").value = job.job_type || "Voice";
+    document.getElementById("jSalary").value = job.salary || "";
+    document.getElementById("jLanguages").value = job.languages || "";
+    document.getElementById("jMap").value = job.map_link || "";
+    document.getElementById("jJd").value = job.jd || "";
+
+    document.getElementById("formTitle").textContent = "Edit job";
+    document.getElementById("addBtn").textContent = "Save changes";
+    document.getElementById("cancelEditBtn").style.display = "block";
+    document.getElementById("formCard").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    ["jTitle","jUuid","jLocation","jSalary","jLanguages","jMap","jJd"].forEach(function (id) {
+      document.getElementById(id).value = "";
+    });
+    document.getElementById("jMode").value = "In Office";
+    document.getElementById("jType").value = "Voice";
+    document.getElementById("formTitle").textContent = "Add a new job";
+    document.getElementById("addBtn").textContent = "Add job";
+    document.getElementById("cancelEditBtn").style.display = "none";
+  }
+
+  async function saveJob() {
     const errId = "addError";
     const job = {
       title: document.getElementById("jTitle").value.trim(),
       job_uuid: document.getElementById("jUuid").value.trim(),
       location: document.getElementById("jLocation").value.trim(),
       mode: document.getElementById("jMode").value,
+      job_type: document.getElementById("jType").value,
       salary: document.getElementById("jSalary").value.trim(),
       languages: document.getElementById("jLanguages").value.trim(),
       map_link: document.getElementById("jMap").value.trim(),
@@ -421,23 +524,24 @@
       return;
     }
 
+    const isEdit = !!editingId;
     const btn = document.getElementById("addBtn");
     btn.disabled = true;
-    btn.textContent = "Adding…";
+    btn.textContent = isEdit ? "Saving…" : "Adding…";
 
     try {
-      const jobs = await adminCall({ action: "add", job: job });
+      const jobs = isEdit
+        ? await adminCall({ action: "edit", id: editingId, job: job })
+        : await adminCall({ action: "add", job: job });
       renderJobs(jobs);
-      showBox("addOk", "Job added — it's live on the careers page now.");
-      ["jTitle","jUuid","jLocation","jSalary","jLanguages","jMap","jJd"].forEach(function (id) {
-        document.getElementById(id).value = "";
-      });
+      showBox("addOk", isEdit ? "Job updated." : "Job added — it's live on the careers page now.");
+      cancelEdit();
+      btn.disabled = false;
     } catch (err) {
       showBox(errId, err.message);
+      btn.disabled = false;
+      btn.textContent = isEdit ? "Save changes" : "Add job";
     }
-
-    btn.disabled = false;
-    btn.textContent = "Add job";
   }
 
   async function deleteJob(job) {

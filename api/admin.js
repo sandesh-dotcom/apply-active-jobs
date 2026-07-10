@@ -1,4 +1,4 @@
-// POST /api/admin — admin actions: login, list, add, delete.
+// POST /api/admin — admin actions: login, list, add, edit, delete.
 // Protected by Basic auth. Default credentials: admin@mopid.me / Welcome@123
 // (override with ADMIN_EMAIL / ADMIN_PASSWORD env variables in Vercel).
 
@@ -76,6 +76,7 @@ export default async function handler(req, res) {
         title: String(job.title).trim(),
         location: String(job.location || "").trim(),
         mode: String(job.mode || "In Office").trim(),
+        job_type: String(job.job_type || "Voice").trim(),
         map_link: String(job.map_link || "").trim(),
         salary: String(job.salary || "").trim(),
         languages: String(job.languages || "").trim(),
@@ -83,6 +84,35 @@ export default async function handler(req, res) {
         created_at: new Date().toISOString(),
       };
       jobs.unshift(newJob);
+      await saveJobs(jobs);
+      return res.status(200).json(jobs);
+    }
+
+    if (action === "edit") {
+      if (!id) return res.status(400).json({ error: "Job id is required." });
+      if (!job || !job.title || !job.job_uuid) {
+        return res
+          .status(400)
+          .json({ error: "Job title and ATS Job Id are required." });
+      }
+      const jobs = await getJobs();
+      const idx = jobs.findIndex(function (j) { return j.id === id; });
+      if (idx === -1) {
+        return res.status(404).json({ error: "Job not found." });
+      }
+      jobs[idx] = {
+        ...jobs[idx],
+        job_uuid: String(job.job_uuid).trim(),
+        title: String(job.title).trim(),
+        location: String(job.location || "").trim(),
+        mode: String(job.mode || "In Office").trim(),
+        job_type: String(job.job_type || "Voice").trim(),
+        map_link: String(job.map_link || "").trim(),
+        salary: String(job.salary || "").trim(),
+        languages: String(job.languages || "").trim(),
+        jd: String(job.jd || "").trim(),
+        updated_at: new Date().toISOString(),
+      };
       await saveJobs(jobs);
       return res.status(200).json(jobs);
     }

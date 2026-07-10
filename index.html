@@ -109,6 +109,16 @@
     border: 1px solid rgba(231,112,76,0.30);
   }
 
+  .type-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: rgba(59,130,246,0.10);
+    color: #1d4ed8;
+    border: 1px solid rgba(59,130,246,0.30);
+  }
+
   .salary { font-weight: 600; color: var(--ink); }
 
   .lang-chips { margin-top: 10px; }
@@ -462,6 +472,12 @@
         mode.textContent = job.mode;
         meta.appendChild(mode);
       }
+      if (job.job_type) {
+        const type = document.createElement("span");
+        type.className = "type-pill";
+        type.textContent = job.job_type;
+        meta.appendChild(type);
+      }
       if (job.salary) {
         const sal = document.createElement("span");
         sal.className = "salary";
@@ -524,6 +540,7 @@
 
     if (job.location) addRow("📍", job.location);
     if (job.mode) addRow("🏢", job.mode);
+    if (job.job_type) addRow("🎧", job.job_type);
     if (job.salary) addRow("💰", "₹ " + job.salary);
     if (job.languages) addRow("🗣️", job.languages);
     if (job.map_link) addRow("🗺️", "View location on map", true, job.map_link);

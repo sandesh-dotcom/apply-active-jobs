@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mopid Jobs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent:       #E7704C;
+    --accent-dark:  #d55c38;
+    --ink:          #1E1E1E;
+    --text:         #334155;
+    --muted:        #64748b;
+    --line:         #e2e8f0;
+    --bg:           #f8fafc;
+    --card:         #ffffff;
+    --danger:       #dc2626;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  header svg { height: 26px; width: auto; display: block; }
+  header .header-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  .hero {
+    margin: 6px 0 20px;
+  }
+  .hero h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+  .hero p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+  /* Job cards */
+  .job-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .job-card:active, .job-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 10px rgba(231,112,76,0.10);
+  }
+
+  .job-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+
+  .job-meta {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    font-size: 13px;
+    color: var(--muted);
+    align-items: center;
+  }
+
+  .mode-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: rgba(231,112,76,0.10);
+    color: var(--accent-dark);
+    border: 1px solid rgba(231,112,76,0.30);
+  }
+
+  .salary { font-weight: 600; color: var(--ink); }
+
+  .lang-chips { margin-top: 10px; }
+  .chip {
+    display: inline-block;
+    font-size: 12px;
+    padding: 3px 10px;
+    margin: 0 6px 6px 0;
+    border-radius: 999px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--text);
+  }
+
+  .apply-hint {
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* Detail view */
+  .back-btn {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 14px;
+  }
+  .back-btn:hover { color: var(--ink); }
+
+  .detail-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px 18px;
+  }
+
+  .detail-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .detail-rows { margin-top: 14px; }
+  .detail-row {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row .icon { flex: none; width: 20px; text-align: center; }
+  .detail-row a { color: var(--accent-dark); font-weight: 600; text-decoration: none; }
+  .detail-row a:hover { text-decoration: underline; }
+
+  .jd-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin: 18px 0 8px;
+  }
+  .jd-text {
+    font-size: 14px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+  }
+
+  .primary-btn {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .primary-btn:hover:not(:disabled) { background: var(--accent-dark); }
+  .primary-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+
+  /* Apply form */
+  .form-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .field { margin-top: 16px; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input::placeholder { color: #94a3b8; }
+  input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(231,112,76,0.18);
+  }
+
+  .phone-group { display: flex; }
+  .phone-prefix {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+  }
+  .phone-group input { border-radius: 0 10px 10px 0; }
+
+  .field-error {
+    display: none;
+    color: var(--danger);
+    font-size: 12px;
+    margin-top: 5px;
+  }
+
+  .error-box {
+    display: none;
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #7f1d1d;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+  }
+
+  /* Success */
+  .success-wrap {
+    text-align: center;
+    padding: 48px 16px;
+  }
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .success-wrap h2 { font-size: 20px; color: var(--ink); font-weight: 800; }
+  .success-wrap p { font-size: 14px; color: var(--muted); margin-top: 6px; }
+
+  .empty-state, .loading-state {
+    text-align: center;
+    padding: 60px 16px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  @media (min-width: 640px) {
+    .hero h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1062 301" fill="none" role="img" aria-label="Mopid">
+  <path d="M504.437 73.5602V229.234H473.97V128.268L430.159 200.545H426.601L382.79 128.491V229.234H352.1V73.5602H383.679L428.38 147.172L472.858 73.5602H504.437ZM668.635 208.996C652.919 224.563 633.793 232.347 611.258 232.347C588.722 232.347 569.597 224.563 553.881 208.996C538.314 193.28 530.53 174.081 530.53 151.397C530.53 128.713 538.314 109.588 553.881 94.0202C569.597 78.3046 588.722 70.4468 611.258 70.4468C633.793 70.4468 652.919 78.3046 668.635 94.0202C684.35 109.588 692.208 128.713 692.208 151.397C692.208 174.081 684.35 193.28 668.635 208.996ZM575.453 188.091C585.09 197.58 597.025 202.324 611.258 202.324C625.491 202.324 637.426 197.58 647.063 188.091C656.7 178.454 661.518 166.223 661.518 151.397C661.518 136.571 656.7 124.339 647.063 114.702C637.426 105.066 625.491 100.247 611.258 100.247C597.025 100.247 585.09 105.066 575.453 114.702C565.816 124.339 560.998 136.571 560.998 151.397C560.998 166.223 565.816 178.454 575.453 188.091ZM776.025 73.5602C790.999 73.5602 803.601 78.6011 813.831 88.6828C824.061 98.7645 829.176 111.144 829.176 125.822C829.176 140.5 824.061 152.88 813.831 162.961C803.601 173.043 790.999 178.084 776.025 178.084H748.671V229.234H717.981V73.5602H776.025ZM776.025 149.395C782.548 149.395 787.96 147.172 792.26 142.724C796.559 138.128 798.709 132.494 798.709 125.822C798.709 119.002 796.559 113.368 792.26 108.92C787.96 104.473 782.548 102.249 776.025 102.249H748.671V149.395H776.025ZM853.36 73.5602H884.05V229.234H853.36V73.5602ZM978.894 73.5602C1000.24 73.5602 1018.03 81.0474 1032.27 96.0217C1046.65 110.996 1053.84 129.454 1053.84 151.397C1053.84 173.339 1046.65 191.798 1032.27 206.772C1018.03 221.746 1000.24 229.234 978.894 229.234H917.069V73.5602H978.894ZM978.894 199.878C992.386 199.878 1003.36 195.43 1011.81 186.535C1020.26 177.491 1024.48 165.778 1024.48 151.397C1024.48 137.016 1020.26 125.377 1011.81 116.482C1003.36 107.438 992.386 102.916 978.894 102.916H947.759V199.878H978.894Z" fill="#1E1E1E"/>
+  <rect x="0.299011" y="0.57251" width="300.131" height="300.131" rx="33.5249" fill="#E7704C"/>
+  <g clip-path="url(#clip0_hdr)">
+  <path d="M47.2743 68.0055C46.7236 57.7036 56.1376 57.5064 62.4061 63.4291C76.9625 74.4451 91.4644 85.5359 106.021 96.5586C107.054 97.3406 107.435 98.143 107.435 99.3942C107.313 145.314 107.754 191.255 107.401 237.162C106.66 245.573 96.9919 244.417 92.3007 239.752C79.4985 229.961 66.8186 220.005 53.9552 210.288C46.3473 204.542 47.3357 206.269 47.2337 196.906L47.252 68.0123L47.2743 68.0055Z" fill="#1E1E1E"/>
+  <path d="M255.048 68.0055C255.599 57.7036 246.185 57.5064 239.916 63.4291C225.36 74.4451 210.858 85.5359 196.301 96.5586C195.268 97.3406 194.887 98.143 194.887 99.3942C195.01 145.314 194.568 191.255 194.921 237.162C195.662 245.573 205.33 244.417 210.022 239.752C222.824 229.961 235.504 220.005 248.367 210.288C255.975 204.542 254.987 206.269 255.089 196.906L255.07 68.0123L255.048 68.0055Z" fill="#1E1E1E"/>
+  <path d="M181.805 193.75C181.873 197.994 180.237 200.877 176.946 203.25C169.95 208.296 163.036 213.457 156.074 218.55C152.905 220.869 150.281 220.753 147.147 218.387C140.314 213.232 133.515 208.017 126.553 203.032C123.242 200.659 120.491 198.062 120.518 193.927L120.524 107.566C158.945 132.692 143.404 132.651 181.833 107.568L181.805 193.75Z" fill="#1E1E1E"/>
+  </g>
+  <defs><clipPath id="clip0_hdr"><rect width="207.855" height="183.871" fill="white" transform="translate(47.2338 59.499)"/></clipPath></defs>
+  </svg>
+  <span class="header-title">Jobs</span>
+</header>
+
+<div class="container">
+
+  <!-- ── List view ── -->
+  <div id="listView">
+    <div class="hero">
+      <h1>Find your next job</h1>
+      <p>Tap a job to see details and apply in under a minute</p>
+    </div>
+    <div id="jobList">
+      <div class="loading-state">Loading open positions…</div>
+    </div>
+  </div>
+
+  <!-- ── Detail view ── -->
+  <div id="detailView" style="display:none;">
+    <button class="back-btn" onclick="showList()">← All jobs</button>
+    <div class="detail-card">
+      <div class="detail-title" id="dTitle"></div>
+      <div class="detail-rows" id="dRows"></div>
+      <div class="jd-label">Job description</div>
+      <div class="jd-text" id="dJd"></div>
+      <button class="primary-btn" onclick="showApply()">Apply now</button>
+    </div>
+  </div>
+
+  <!-- ── Apply view ── -->
+  <div id="applyView" style="display:none;">
+    <button class="back-btn" onclick="showDetail(currentJob)">← Back to job</button>
+    <div class="detail-card">
+      <div class="detail-title" style="font-size:18px;">Apply — <span id="aJobTitle"></span></div>
+      <div class="form-sub">Fill in your details and we'll be in touch on WhatsApp</div>
+
+      <div class="field">
+        <label for="fullName">Full name</label>
+        <input type="text" id="fullName" placeholder="e.g. Ramesh Kumar">
+        <div class="field-error" id="err-fullName">Please enter your name</div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com">
+        <div class="field-error" id="err-email">Please enter your email</div>
+      </div>
+
+      <div class="field">
+        <label for="mobNo">Mobile number</label>
+        <div class="phone-group">
+          <span class="phone-prefix">+91</span>
+          <input type="tel" id="mobNo" placeholder="9999999999" inputmode="numeric">
+        </div>
+        <div class="field-error" id="err-mobNo">Enter a valid 10-digit mobile number</div>
+      </div>
+
+      <button class="primary-btn" id="submitBtn" onclick="submitApplication()">Submit application</button>
+      <div class="error-box" id="applyError"></div>
+    </div>
+  </div>
+
+  <!-- ── Success view ── -->
+  <div id="successView" style="display:none;">
+    <div class="success-wrap">
+      <div class="success-icon">✓</div>
+      <h2>Application submitted!</h2>
+      <p id="successText">Our team will reach out to you soon.</p>
+      <button class="primary-btn" style="max-width:280px;margin:24px auto 0;" onclick="showList()">Browse more jobs</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let jobs = [];
+  let currentJob = null;
+
+  const views = ["listView", "detailView", "applyView", "successView"];
+  function show(id) {
+    views.forEach(function (v) {
+      document.getElementById(v).style.display = v === id ? "block" : "none";
+    });
+    window.scrollTo(0, 0);
+  }
+  function showList() { show("listView"); }
+
+  function esc(s) { return String(s || ""); }
+
+  // ── Load jobs ──
+  async function loadJobs() {
+    const list = document.getElementById("jobList");
+    try {
+      const res = await fetch("/api/jobs");
+      const data = await res.json();
+      if (!res.ok) {
+        list.innerHTML = "";
+        const div = document.createElement("div");
+        div.className = "empty-state";
+        div.textContent = data.error || "Could not load jobs. Please refresh.";
+        list.appendChild(div);
+        return;
+      }
+      jobs = data;
+      renderList();
+    } catch (err) {
+      list.innerHTML = "";
+      const div = document.createElement("div");
+      div.className = "empty-state";
+      div.textContent = "Could not load jobs. Please check your connection and refresh.";
+      list.appendChild(div);
+    }
+  }
+
+  function renderList() {
+    const list = document.getElementById("jobList");
+    list.innerHTML = "";
+
+    if (!jobs.length) {
+      const div = document.createElement("div");
+      div.className = "empty-state";
+      div.textContent = "No open positions right now. Please check back soon!";
+      list.appendChild(div);
+      return;
+    }
+
+    jobs.forEach(function (job) {
+      const card = document.createElement("div");
+      card.className = "job-card";
+      card.onclick = function () { showDetail(job); };
+
+      const title = document.createElement("div");
+      title.className = "job-title";
+      title.textContent = job.title;
+      card.appendChild(title);
+
+      const meta = document.createElement("div");
+      meta.className = "job-meta";
+      if (job.location) {
+        const loc = document.createElement("span");
+        loc.textContent = "📍 " + job.location;
+        meta.appendChild(loc);
+      }
+      if (job.mode) {
+        const mode = document.createElement("span");
+        mode.className = "mode-pill";
+        mode.textContent = job.mode;
+        meta.appendChild(mode);
+      }
+      if (job.salary) {
+        const sal = document.createElement("span");
+        sal.className = "salary";
+        sal.textContent = "₹ " + job.salary;
+        meta.appendChild(sal);
+      }
+      card.appendChild(meta);
+
+      if (job.languages) {
+        const chips = document.createElement("div");
+        chips.className = "lang-chips";
+        job.languages.split(",").forEach(function (l) {
+          if (!l.trim()) return;
+          const c = document.createElement("span");
+          c.className = "chip";
+          c.textContent = l.trim();
+          chips.appendChild(c);
+        });
+        card.appendChild(chips);
+      }
+
+      const hint = document.createElement("div");
+      hint.className = "apply-hint";
+      hint.textContent = "View & apply →";
+      card.appendChild(hint);
+
+      list.appendChild(card);
+    });
+  }
+
+  // ── Detail ──
+  function showDetail(job) {
+    currentJob = job;
+    document.getElementById("dTitle").textContent = job.title;
+
+    const rows = document.getElementById("dRows");
+    rows.innerHTML = "";
+
+    function addRow(icon, content, isLink, href) {
+      const row = document.createElement("div");
+      row.className = "detail-row";
+      const ic = document.createElement("span");
+      ic.className = "icon";
+      ic.textContent = icon;
+      row.appendChild(ic);
+      if (isLink) {
+        const a = document.createElement("a");
+        a.href = href;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = content;
+        row.appendChild(a);
+      } else {
+        const span = document.createElement("span");
+        span.textContent = content;
+        row.appendChild(span);
+      }
+      rows.appendChild(row);
+    }
+
+    if (job.location) addRow("📍", job.location);
+    if (job.mode) addRow("🏢", job.mode);
+    if (job.salary) addRow("💰", "₹ " + job.salary);
+    if (job.languages) addRow("🗣️", job.languages);
+    if (job.map_link) addRow("🗺️", "View location on map", true, job.map_link);
+
+    document.getElementById("dJd").textContent = job.jd || "Details will be shared during the call.";
+    show("detailView");
+  }
+
+  // ── Apply ──
+  function showApply() {
+    document.getElementById("aJobTitle").textContent = currentJob.title;
+    document.getElementById("applyError").style.display = "none";
+    show("applyView");
+  }
+
+  function fieldError(id, showIt) {
+    document.getElementById("err-" + id).style.display = showIt ? "block" : "none";
+  }
+
+  async function submitApplication() {
+    const errorBox = document.getElementById("applyError");
+    errorBox.style.display = "none";
+
+    const fullName = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    let digits = document.getElementById("mobNo").value.replace(/\D/g, "");
+    if (digits.length === 12 && digits.startsWith("91")) digits = digits.slice(2);
+
+    let valid = true;
+    fieldError("fullName", !fullName); if (!fullName) valid = false;
+    fieldError("email", !email); if (!email) valid = false;
+    fieldError("mobNo", digits.length !== 10); if (digits.length !== 10) valid = false;
+    if (!valid) return;
+
+    const nameParts = fullName.split(/\s+/);
+    const firstName = nameParts.shift();
+    const lastName = nameParts.join(" ");
+
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.textContent = "Submitting…";
+
+    try {
+      const res = await fetch("/api/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          job_id: currentJob.id,
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          mob_no: digits
+        })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        errorBox.textContent = data.error || "Something went wrong. Please try again.";
+        errorBox.style.display = "block";
+      } else {
+        document.getElementById("successText").textContent =
+          "You've applied for " + currentJob.title + ". Our team will reach out to you soon.";
+        document.getElementById("fullName").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("mobNo").value = "";
+        show("successView");
+      }
+    } catch (err) {
+      errorBox.textContent = "Network error. Please check your connection and try again.";
+      errorBox.style.display = "block";
+    }
+
+    btn.disabled = false;
+    btn.textContent = "Submit application";
+  }
+
+  loadJobs();
+</script>
+
+</body>
+</html>

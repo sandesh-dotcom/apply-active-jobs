@@ -26,14 +26,38 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding: 32px 16px 80px;
+  }
+
+  /* Header */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  header svg { height: 26px; width: auto; display: block; }
+  header .header-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .admin-main {
+    padding: 28px 16px 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
   .page-title {
-    font-size: 22px;
+    font-size: 19px;
     font-weight: 800;
     color: var(--ink);
     letter-spacing: -0.02em;
@@ -50,7 +74,7 @@
     padding: 24px;
     width: 100%;
     max-width: 560px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   .card-title {
@@ -78,6 +102,7 @@
     color: var(--ink);
     border: 1px solid var(--line);
     border-radius: 10px;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
   textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
   input::placeholder, textarea::placeholder { color: #94a3b8; }
@@ -101,6 +126,7 @@
     border: none;
     border-radius: 999px;
     cursor: pointer;
+    transition: background 0.15s;
   }
   .primary-btn:hover:not(:disabled) { background: var(--accent-dark); }
   .primary-btn:disabled { background: #94a3b8; cursor: not-allowed; }
@@ -132,10 +158,19 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 12px;
-    padding: 13px 0;
-    border-bottom: 1px solid var(--line);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
   }
-  .job-row:last-child { border-bottom: none; }
+  .job-row:last-child { margin-bottom: 0; }
+  .job-row:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 14px rgba(231,112,76,0.10);
+    transform: translateY(-1px);
+  }
   .job-row-title { font-size: 14px; font-weight: 700; color: var(--ink); }
   .job-row-meta { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
   .job-row-meta code {
@@ -229,8 +264,8 @@
     color: var(--ink);
     background: var(--bg);
     border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 5px 10px;
+    border-radius: 999px;
+    padding: 6px 12px;
     cursor: pointer;
   }
   .jd-toolbar button:hover { background: var(--line); }
@@ -250,6 +285,22 @@
 </style>
 </head>
 <body>
+
+<header>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1062 301" fill="none" role="img" aria-label="Mopid">
+  <path d="M504.437 73.5602V229.234H473.97V128.268L430.159 200.545H426.601L382.79 128.491V229.234H352.1V73.5602H383.679L428.38 147.172L472.858 73.5602H504.437ZM668.635 208.996C652.919 224.563 633.793 232.347 611.258 232.347C588.722 232.347 569.597 224.563 553.881 208.996C538.314 193.28 530.53 174.081 530.53 151.397C530.53 128.713 538.314 109.588 553.881 94.0202C569.597 78.3046 588.722 70.4468 611.258 70.4468C633.793 70.4468 652.919 78.3046 668.635 94.0202C684.35 109.588 692.208 128.713 692.208 151.397C692.208 174.081 684.35 193.28 668.635 208.996ZM575.453 188.091C585.09 197.58 597.025 202.324 611.258 202.324C625.491 202.324 637.426 197.58 647.063 188.091C656.7 178.454 661.518 166.223 661.518 151.397C661.518 136.571 656.7 124.339 647.063 114.702C637.426 105.066 625.491 100.247 611.258 100.247C597.025 100.247 585.09 105.066 575.453 114.702C565.816 124.339 560.998 136.571 560.998 151.397C560.998 166.223 565.816 178.454 575.453 188.091ZM776.025 73.5602C790.999 73.5602 803.601 78.6011 813.831 88.6828C824.061 98.7645 829.176 111.144 829.176 125.822C829.176 140.5 824.061 152.88 813.831 162.961C803.601 173.043 790.999 178.084 776.025 178.084H748.671V229.234H717.981V73.5602H776.025ZM776.025 149.395C782.548 149.395 787.96 147.172 792.26 142.724C796.559 138.128 798.709 132.494 798.709 125.822C798.709 119.002 796.559 113.368 792.26 108.92C787.96 104.473 782.548 102.249 776.025 102.249H748.671V149.395H776.025ZM853.36 73.5602H884.05V229.234H853.36V73.5602ZM978.894 73.5602C1000.24 73.5602 1018.03 81.0474 1032.27 96.0217C1046.65 110.996 1053.84 129.454 1053.84 151.397C1053.84 173.339 1046.65 191.798 1032.27 206.772C1018.03 221.746 1000.24 229.234 978.894 229.234H917.069V73.5602H978.894ZM978.894 199.878C992.386 199.878 1003.36 195.43 1011.81 186.535C1020.26 177.491 1024.48 165.778 1024.48 151.397C1024.48 137.016 1020.26 125.377 1011.81 116.482C1003.36 107.438 992.386 102.916 978.894 102.916H947.759V199.878H978.894Z" fill="#1E1E1E"/>
+  <rect x="0.299011" y="0.57251" width="300.131" height="300.131" rx="33.5249" fill="#E7704C"/>
+  <g clip-path="url(#clip0_hdr)">
+  <path d="M47.2743 68.0055C46.7236 57.7036 56.1376 57.5064 62.4061 63.4291C76.9625 74.4451 91.4644 85.5359 106.021 96.5586C107.054 97.3406 107.435 98.143 107.435 99.3942C107.313 145.314 107.754 191.255 107.401 237.162C106.66 245.573 96.9919 244.417 92.3007 239.752C79.4985 229.961 66.8186 220.005 53.9552 210.288C46.3473 204.542 47.3357 206.269 47.2337 196.906L47.252 68.0123L47.2743 68.0055Z" fill="#1E1E1E"/>
+  <path d="M255.048 68.0055C255.599 57.7036 246.185 57.5064 239.916 63.4291C225.36 74.4451 210.858 85.5359 196.301 96.5586C195.268 97.3406 194.887 98.143 194.887 99.3942C195.01 145.314 194.568 191.255 194.921 237.162C195.662 245.573 205.33 244.417 210.022 239.752C222.824 229.961 235.504 220.005 248.367 210.288C255.975 204.542 254.987 206.269 255.089 196.906L255.07 68.0123L255.048 68.0055Z" fill="#1E1E1E"/>
+  <path d="M181.805 193.75C181.873 197.994 180.237 200.877 176.946 203.25C169.95 208.296 163.036 213.457 156.074 218.55C152.905 220.869 150.281 220.753 147.147 218.387C140.314 213.232 133.515 208.017 126.553 203.032C123.242 200.659 120.491 198.062 120.518 193.927L120.524 107.566C158.945 132.692 143.404 132.651 181.833 107.568L181.805 193.75Z" fill="#1E1E1E"/>
+  </g>
+  <defs><clipPath id="clip0_hdr"><rect width="207.855" height="183.871" fill="white" transform="translate(47.2338 59.499)"/></clipPath></defs>
+  </svg>
+  <span class="header-title">Admin</span>
+</header>
+
+<div class="admin-main">
 
 <h1 class="page-title">Jobs Admin</h1>
 <p class="page-sub">Add or remove jobs shown on the careers page</p>
@@ -351,6 +402,8 @@
     <div class="card-title">Live jobs</div>
     <div id="jobRows"><div class="empty">Loading…</div></div>
   </div>
+
+</div>
 
 </div>
 

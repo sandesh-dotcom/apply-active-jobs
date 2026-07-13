@@ -79,6 +79,8 @@
     background: rgba(255,255,255,0.12);
     border: 1px solid rgba(255,255,255,0.22);
     margin-bottom: 14px;
+    white-space: normal;
+    max-width: 100%;
   }
   .hero-banner h1 {
     font-size: 25px;
@@ -101,15 +103,15 @@
     background: rgba(255,255,255,0.12);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 999px;
-    padding: 9px 18px;
+    padding: 11px 20px;
     cursor: pointer;
   }
   .hero-cta:hover { background: rgba(255,255,255,0.2); }
   .hero-stats {
-    display: flex;
-    gap: 22px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
     margin-top: 20px;
-    flex-wrap: wrap;
   }
   .hero-stat strong { display: block; font-size: 17px; font-weight: 800; }
   .hero-stat span { font-size: 11.5px; color: rgba(255,255,255,0.6); }
@@ -121,12 +123,37 @@
   }
   .hero-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+  @media (max-width: 400px) {
+    .hero-media { max-height: 150px; }
+  }
+
   @media (min-width: 760px) {
     .hero-banner { padding: 52px 16px; }
     .hero-flex { flex-direction: row; align-items: center; justify-content: space-between; gap: 40px; }
     .hero-copy { flex: 1; }
     .hero-media { flex: 1; max-height: none; height: 280px; }
     .hero-banner h1 { font-size: 32px; }
+  }
+
+  /* Trust badges strip */
+  .trust-strip {
+    background: rgba(231,112,76,0.06);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 16px;
+  }
+  .trust-strip-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 18px;
+  }
+  .trust-badge {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
   }
 
   /* Search + filters */
@@ -145,7 +172,7 @@
   .search-box input {
     width: 100%;
     max-width: 460px;
-    padding: 12px 14px 12px 38px;
+    padding: 13px 14px 13px 38px;
     font-size: 14px;
     font-family: inherit;
     color: var(--ink);
@@ -170,7 +197,7 @@
     font-family: inherit;
     font-size: 13px;
     font-weight: 600;
-    padding: 7px 14px;
+    padding: 9px 16px;
     border-radius: 999px;
     background: var(--card);
     border: 1px solid var(--line);
@@ -237,6 +264,25 @@
   .category-title { font-size: 15px; font-weight: 700; }
   .category-count { font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 2px; }
 
+  /* Locations */
+  .location-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+  .location-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .location-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .location-pin { font-size: 18px; margin-bottom: 8px; }
+  .location-name { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+  .location-count { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
   /* Perks */
   .perks-grid {
     display: grid;
@@ -294,6 +340,7 @@
     gap: 12px;
     align-items: flex-start;
   }
+  .job-card-headtext { min-width: 0; flex: 1; }
 
   .job-avatar {
     flex: none;
@@ -374,8 +421,10 @@
     margin-top: auto;
     padding-top: 12px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 6px 10px;
   }
 
   .posted {
@@ -417,6 +466,36 @@
   }
   .step-title { font-size: 14px; font-weight: 700; color: var(--ink); }
   .step-sub { font-size: 12.5px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+  /* FAQ */
+  .faq-list { display: flex; flex-direction: column; gap: 10px; }
+  .faq-item {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 4px 16px;
+  }
+  .faq-item[open] { border-color: var(--accent); }
+  .faq-question {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 28px 14px 0;
+    position: relative;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .faq-question::-webkit-details-marker { display: none; }
+  .faq-question::after {
+    content: "+";
+    position: absolute;
+    right: 0;
+    top: 14px;
+    font-size: 18px;
+    color: var(--muted);
+  }
+  .faq-item[open] .faq-question::after { content: "\2013"; color: var(--accent); }
+  .faq-answer { font-size: 13.5px; color: var(--muted); line-height: 1.6; padding: 0 0 16px; }
 
   /* Testimonials */
   .testimonial-grid {
@@ -710,12 +789,27 @@
     </div>
   </section>
 
+  <section class="trust-strip">
+    <div class="trust-strip-inner">
+      <span class="trust-badge">✓ Weekly payouts</span>
+      <span class="trust-badge">✓ Fast hiring — 24 hr callback</span>
+      <span class="trust-badge">✓ No experience needed</span>
+      <span class="trust-badge">✓ No fees, ever</span>
+    </div>
+  </section>
+
   <div class="container">
 
     <section class="section-block" id="categoriesSection" style="display:none;">
       <div class="section-title">Browse by job type</div>
       <div class="section-sub">Pick a category to see matching roles</div>
       <div class="category-grid" id="categoryGrid"></div>
+    </section>
+
+    <section class="section-block" id="locationsSection" style="display:none;">
+      <div class="section-title">Hiring across these locations</div>
+      <div class="section-sub">Tap a location to see roles near you</div>
+      <div class="location-grid" id="locationGrid"></div>
     </section>
 
     <section class="section-block">
@@ -783,6 +877,37 @@
           <div class="step-title">Get hired</div>
           <div class="step-sub">Receive your offer and join the team that week.</div>
         </div>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-title">Frequently asked questions</div>
+      <div class="section-sub">Everything you need to know before you apply</div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-question">Do I need prior experience to apply?</summary>
+          <div class="faq-answer">No — most roles include training, so you can apply even without prior BPO experience.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">How soon will I hear back after applying?</summary>
+          <div class="faq-answer">Our team calls you within 24 hours of your application.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">What does the interview process look like?</summary>
+          <div class="faq-answer">A short call or in-person round — we keep it quick, no lengthy process.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">How often do I get paid?</summary>
+          <div class="faq-answer">Payouts are weekly, straight to your bank account.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">Can I choose a location near me?</summary>
+          <div class="faq-answer">Yes — we hire across multiple locations. Check "Hiring across these locations" above to find one near you.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-question">Are there any fees to apply or get hired?</summary>
+          <div class="faq-answer">No — applying and getting hired through this page is completely free.</div>
+        </details>
       </div>
     </section>
 
@@ -997,6 +1122,7 @@
       jobs = data;
       document.getElementById("heroJobCount").textContent = jobs.length;
       renderCategories();
+      renderLocations();
       renderChips();
       applyFilters();
     } catch (err) {
@@ -1049,6 +1175,55 @@
 
       wrap.appendChild(tile);
     });
+  }
+
+  // ── Locations ──
+  function renderLocations() {
+    const section = document.getElementById("locationsSection");
+    const wrap = document.getElementById("locationGrid");
+    wrap.innerHTML = "";
+
+    const counts = {};
+    jobs.forEach(function (job) {
+      const loc = (job.location || "").trim();
+      if (!loc) return;
+      counts[loc] = (counts[loc] || 0) + 1;
+    });
+
+    const locations = Object.keys(counts);
+    if (!locations.length) { section.style.display = "none"; return; }
+    section.style.display = "block";
+
+    locations.forEach(function (loc) {
+      const tile = document.createElement("div");
+      tile.className = "location-card";
+      tile.onclick = function () { selectLocation(loc); };
+
+      const pin = document.createElement("div");
+      pin.className = "location-pin";
+      pin.textContent = "📍";
+      tile.appendChild(pin);
+
+      const name = document.createElement("div");
+      name.className = "location-name";
+      name.textContent = loc;
+      tile.appendChild(name);
+
+      const count = document.createElement("div");
+      count.className = "location-count";
+      count.textContent = counts[loc] + (counts[loc] === 1 ? " opening" : " openings");
+      tile.appendChild(count);
+
+      wrap.appendChild(tile);
+    });
+  }
+
+  function selectLocation(loc) {
+    activeType = "All";
+    document.getElementById("searchInput").value = loc;
+    renderChips();
+    applyFilters();
+    scrollToJobs();
   }
 
   // ── Filters ──
@@ -1134,6 +1309,7 @@
       head.appendChild(avatar);
 
       const headText = document.createElement("div");
+      headText.className = "job-card-headtext";
       const title = document.createElement("div");
       title.className = "job-title";
       title.textContent = job.title;

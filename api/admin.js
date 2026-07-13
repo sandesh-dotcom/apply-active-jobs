@@ -1,4 +1,4 @@
-// POST /api/admin — admin actions: login, list, add, edit, delete.
+// POST /api/admin — admin actions: login, list, add, edit, reorder, delete.
 // Protected by Basic auth. Default credentials: admin@mopid.me / Welcome@123
 // (override with ADMIN_EMAIL / ADMIN_PASSWORD env variables in Vercel).
 
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     });
   }
 
-  const { action, job, id } = req.body || {};
+  const { action, job, id, order } = req.body || {};
 
   try {
     if (action === "login") {
@@ -115,6 +115,21 @@ export default async function handler(req, res) {
       };
       await saveJobs(jobs);
       return res.status(200).json(jobs);
+    }
+
+    if (action === "reorder") {
+      if (!Array.isArray(order) || !order.length) {
+        return res.status(400).json({ error: "Job order is required." });
+      }
+      const jobs = await getJobs();
+      const byId = {};
+      jobs.forEach(function (j) { byId[j.id] = j; });
+      const reordered = order.map(function (jid) { return byId[jid]; }).filter(Boolean);
+      jobs.forEach(function (j) {
+        if (order.indexOf(j.id) === -1) reordered.push(j);
+      });
+      await saveJobs(reordered);
+      return res.status(200).json(reordered);
     }
 
     if (action === "delete") {

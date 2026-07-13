@@ -4,14 +4,16 @@ Candidate-facing job board where candidates browse jobs and apply. Applications
 are pushed straight into the Mopid ATS. Jobs are managed from a private admin page.
 
 ## Pages
-- `/` (index.html) — candidate page: job list → job details → apply form → success
-- `/admin.html` — admin page: sign in, add jobs, remove jobs
+- `/` (index.html) — candidate job board: search + filter, job list → job
+  details → apply form → success
+- `/admin.html` — admin page: sign in, add/edit/remove jobs, reorder jobs
 
 ## APIs
 - `api/jobs.js` — GET public job list (ATS Job Id stripped server-side)
 - `api/apply.js` — POST application; maps job → ATS job_uuid on the server and
   pushes the lead (source: "Career Page", mobile auto-prefixed with 91)
-- `api/admin.js` — POST admin actions (login / list / add / delete), Basic auth
+- `api/admin.js` — POST admin actions (login / list / add / edit / reorder /
+  delete), Basic auth
 
 ## Setup on Vercel (one-time)
 
@@ -34,5 +36,11 @@ then redeploy. Strongly recommended before sharing the link widely.
 ## Security notes
 - The ATS Job Id is never sent to candidates' browsers — the public API strips
   it, and the apply API resolves it server-side.
-- The admin page is protected by the email/password above. Change the default
-  password after first deploy.
+- The admin page is protected by the email/password above. **Change the
+  default password (`ADMIN_PASSWORD` env var) before sharing the admin link —
+  the default is public in this repo's source.**
+- All secrets (`KV_REST_API_URL`/`TOKEN`, `ADMIN_EMAIL`/`PASSWORD`) live only
+  in Vercel environment variables and are read server-side in `api/*.js`.
+  They are never sent to the browser — check any new `api/*.js` file follows
+  the same pattern (read `process.env.*` server-side only, never embed a
+  secret in `index.html`/`admin.html` or any client-side `<script>`).

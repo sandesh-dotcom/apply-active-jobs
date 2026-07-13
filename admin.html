@@ -146,7 +146,26 @@
     font-size: 11px;
   }
 
-  .row-actions { flex: none; display: flex; gap: 8px; }
+  .row-actions { flex: none; display: flex; align-items: center; gap: 8px; }
+
+  .reorder-btns { flex: none; display: flex; flex-direction: column; gap: 2px; }
+  .reorder-btn {
+    font-family: inherit;
+    font-size: 11px;
+    line-height: 1;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    width: 24px;
+    height: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .reorder-btn:hover:not(:disabled) { background: var(--bg); color: var(--ink); }
+  .reorder-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   .edit-btn {
     flex: none;
@@ -422,7 +441,10 @@
     }
   }
 
+  let currentJobs = [];
+
   function renderJobs(jobs) {
+    currentJobs = jobs;
     const rows = document.getElementById("jobRows");
     rows.innerHTML = "";
 
@@ -434,7 +456,7 @@
       return;
     }
 
-    jobs.forEach(function (job) {
+    jobs.forEach(function (job, index) {
       const row = document.createElement("div");
       row.className = "job-row";
 
@@ -471,6 +493,27 @@
 
       const actions = document.createElement("div");
       actions.className = "row-actions";
+
+      const reorder = document.createElement("div");
+      reorder.className = "reorder-btns";
+
+      const up = document.createElement("button");
+      up.className = "reorder-btn";
+      up.textContent = "▲";
+      up.disabled = index === 0;
+      up.title = "Move up";
+      up.onclick = function () { moveJob(job.id, -1); };
+      reorder.appendChild(up);
+
+      const down = document.createElement("button");
+      down.className = "reorder-btn";
+      down.textContent = "▼";
+      down.disabled = index === jobs.length - 1;
+      down.title = "Move down";
+      down.onclick = function () { moveJob(job.id, 1); };
+      reorder.appendChild(down);
+
+      actions.appendChild(reorder);
 
       const edit = document.createElement("button");
       edit.className = "edit-btn";
@@ -594,6 +637,24 @@
       showBox(errId, err.message);
       btn.disabled = false;
       btn.textContent = isEdit ? "Save changes" : "Add job";
+    }
+  }
+
+  async function moveJob(id, delta) {
+    const idx = currentJobs.findIndex(function (j) { return j.id === id; });
+    const swapIdx = idx + delta;
+    if (idx === -1 || swapIdx < 0 || swapIdx >= currentJobs.length) return;
+
+    const reordered = currentJobs.slice();
+    const tmp = reordered[idx];
+    reordered[idx] = reordered[swapIdx];
+    reordered[swapIdx] = tmp;
+
+    try {
+      const jobs = await adminCall({ action: "reorder", order: reordered.map(function (j) { return j.id; }) });
+      renderJobs(jobs);
+    } catch (err) {
+      alert(err.message);
     }
   }
 

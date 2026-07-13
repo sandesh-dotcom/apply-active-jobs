@@ -50,13 +50,13 @@
   }
 
   .container {
-    max-width: 640px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 20px 16px 60px;
   }
 
   .hero {
-    margin: 6px 0 20px;
+    margin: 6px 0 18px;
   }
   .hero h1 {
     font-size: 24px;
@@ -67,33 +67,132 @@
   }
   .hero p { font-size: 14px; color: var(--muted); margin-top: 4px; }
 
-  /* Job cards */
+  /* Search + filters */
+  .toolbar { margin-bottom: 18px; }
+
+  .search-box {
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .search-box .icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 12px 14px 12px 38px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .search-box input::placeholder { color: #94a3b8; }
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(231,112,76,0.18);
+  }
+
+  .filter-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-chip {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .filter-chip:hover { border-color: var(--accent); }
+  .filter-chip.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+
+  .result-count {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  /* Job grid + cards */
+  .job-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  @media (min-width: 720px) {
+    .job-grid { grid-template-columns: 1fr 1fr; }
+  }
+
   .job-card {
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: 14px;
     padding: 16px;
-    margin-bottom: 12px;
     cursor: pointer;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    display: flex;
+    flex-direction: column;
   }
   .job-card:active, .job-card:hover {
     border-color: var(--accent);
-    box-shadow: 0 2px 10px rgba(231,112,76,0.10);
+    box-shadow: 0 4px 14px rgba(231,112,76,0.12);
+    transform: translateY(-1px);
+  }
+
+  .job-card-head {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .job-avatar {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(231,112,76,0.12);
+    color: var(--accent-dark);
+    font-size: 16px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .job-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--ink);
     line-height: 1.35;
   }
+  .job-loc {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
 
   .job-meta {
-    margin-top: 8px;
+    margin-top: 12px;
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 12px;
+    gap: 6px 8px;
     font-size: 13px;
     color: var(--muted);
     align-items: center;
@@ -119,7 +218,12 @@
     border: 1px solid rgba(59,130,246,0.30);
   }
 
-  .salary { font-weight: 600; color: var(--ink); }
+  .salary {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 13.5px;
+    margin-top: 10px;
+  }
 
   .lang-chips { margin-top: 10px; }
   .chip {
@@ -133,11 +237,24 @@
     color: var(--text);
   }
 
+  .job-card-foot {
+    margin-top: auto;
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .posted {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
   .apply-hint {
-    margin-top: 8px;
     font-size: 13px;
     font-weight: 600;
     color: var(--accent);
+    white-space: nowrap;
   }
 
   /* Detail view */
@@ -339,6 +456,16 @@
       <h1>Find your next job</h1>
       <p>Tap a job to see details and apply in under a minute</p>
     </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search by title or location" oninput="applyFilters()">
+      </div>
+      <div class="filter-chips" id="filterChips"></div>
+    </div>
+
+    <div class="result-count" id="resultCount" style="display:none;"></div>
     <div id="jobList">
       <div class="loading-state">Loading open positions…</div>
     </div>
@@ -404,6 +531,7 @@
 <script>
   let jobs = [];
   let currentJob = null;
+  let activeType = "All";
 
   const views = ["listView", "detailView", "applyView", "successView"];
   function show(id) {
@@ -415,6 +543,18 @@
   function showList() { show("listView"); }
 
   function esc(s) { return String(s || ""); }
+
+  function timeAgo(iso) {
+    if (!iso) return "";
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const days = Math.floor(diffMs / 86400000);
+    if (days <= 0) return "Posted today";
+    if (days === 1) return "Posted 1 day ago";
+    if (days < 30) return "Posted " + days + " days ago";
+    const months = Math.floor(days / 30);
+    if (months === 1) return "Posted 1 month ago";
+    return "Posted " + months + " months ago";
+  }
 
   function escapeHtml(s) {
     return String(s || "")
@@ -473,7 +613,8 @@
         return;
       }
       jobs = data;
-      renderList();
+      renderChips();
+      applyFilters();
     } catch (err) {
       list.innerHTML = "";
       const div = document.createElement("div");
@@ -483,11 +624,53 @@
     }
   }
 
-  function renderList() {
+  // ── Filters ──
+  function renderChips() {
+    const wrap = document.getElementById("filterChips");
+    wrap.innerHTML = "";
+
+    const types = [];
+    jobs.forEach(function (job) {
+      if (job.job_type && types.indexOf(job.job_type) === -1) types.push(job.job_type);
+    });
+
+    if (!types.length) { wrap.style.display = "none"; return; }
+    wrap.style.display = "flex";
+
+    ["All"].concat(types).forEach(function (type) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "filter-chip" + (type === activeType ? " active" : "");
+      chip.textContent = type;
+      chip.onclick = function () {
+        activeType = type;
+        renderChips();
+        applyFilters();
+      };
+      wrap.appendChild(chip);
+    });
+  }
+
+  function applyFilters() {
+    const q = document.getElementById("searchInput").value.trim().toLowerCase();
+    const filtered = jobs.filter(function (job) {
+      if (activeType !== "All" && job.job_type !== activeType) return false;
+      if (!q) return true;
+      const haystack = (job.title + " " + (job.location || "")).toLowerCase();
+      return haystack.indexOf(q) !== -1;
+    });
+    renderList(filtered);
+  }
+
+  function renderList(filtered) {
     const list = document.getElementById("jobList");
+    const countEl = document.getElementById("resultCount");
     list.innerHTML = "";
+    list.className = "job-grid";
 
     if (!jobs.length) {
+      list.className = "";
+      countEl.style.display = "none";
       const div = document.createElement("div");
       div.className = "empty-state";
       div.textContent = "No open positions right now. Please check back soon!";
@@ -495,23 +678,47 @@
       return;
     }
 
-    jobs.forEach(function (job) {
+    countEl.style.display = "block";
+    countEl.textContent = filtered.length + (filtered.length === 1 ? " open position" : " open positions");
+
+    if (!filtered.length) {
+      list.className = "";
+      const div = document.createElement("div");
+      div.className = "empty-state";
+      div.textContent = "No jobs match your search. Try a different filter.";
+      list.appendChild(div);
+      return;
+    }
+
+    filtered.forEach(function (job) {
       const card = document.createElement("div");
       card.className = "job-card";
       card.onclick = function () { showDetail(job); };
 
+      const head = document.createElement("div");
+      head.className = "job-card-head";
+
+      const avatar = document.createElement("div");
+      avatar.className = "job-avatar";
+      avatar.textContent = (job.title || "?").trim().charAt(0).toUpperCase();
+      head.appendChild(avatar);
+
+      const headText = document.createElement("div");
       const title = document.createElement("div");
       title.className = "job-title";
       title.textContent = job.title;
-      card.appendChild(title);
+      headText.appendChild(title);
+      if (job.location) {
+        const loc = document.createElement("div");
+        loc.className = "job-loc";
+        loc.textContent = "📍 " + job.location;
+        headText.appendChild(loc);
+      }
+      head.appendChild(headText);
+      card.appendChild(head);
 
       const meta = document.createElement("div");
       meta.className = "job-meta";
-      if (job.location) {
-        const loc = document.createElement("span");
-        loc.textContent = "📍 " + job.location;
-        meta.appendChild(loc);
-      }
       if (job.mode) {
         const mode = document.createElement("span");
         mode.className = "mode-pill";
@@ -524,13 +731,14 @@
         type.textContent = job.job_type;
         meta.appendChild(type);
       }
+      card.appendChild(meta);
+
       if (job.salary) {
-        const sal = document.createElement("span");
+        const sal = document.createElement("div");
         sal.className = "salary";
         sal.textContent = "₹ " + job.salary;
-        meta.appendChild(sal);
+        card.appendChild(sal);
       }
-      card.appendChild(meta);
 
       if (job.languages) {
         const chips = document.createElement("div");
@@ -545,10 +753,20 @@
         card.appendChild(chips);
       }
 
-      const hint = document.createElement("div");
+      const foot = document.createElement("div");
+      foot.className = "job-card-foot";
+
+      const posted = document.createElement("span");
+      posted.className = "posted";
+      posted.textContent = timeAgo(job.created_at);
+      foot.appendChild(posted);
+
+      const hint = document.createElement("span");
       hint.className = "apply-hint";
       hint.textContent = "View & apply →";
-      card.appendChild(hint);
+      foot.appendChild(hint);
+
+      card.appendChild(foot);
 
       list.appendChild(card);
     });

@@ -55,24 +55,83 @@
     padding: 20px 16px 60px;
   }
 
-  .hero {
-    margin: 6px 0 18px;
+  /* Hero banner */
+  .hero-banner {
+    background: linear-gradient(135deg, #1E1E1E 0%, #33241d 55%, var(--accent-dark) 145%);
+    color: #fff;
+    padding: 32px 16px;
   }
-  .hero h1 {
-    font-size: 24px;
+  .hero-flex {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+  .hero-copy { max-width: 480px; }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.22);
+    margin-bottom: 14px;
+  }
+  .hero-banner h1 {
+    font-size: 25px;
     font-weight: 800;
-    color: var(--ink);
     letter-spacing: -0.02em;
-    line-height: 1.25;
+    line-height: 1.28;
   }
-  .hero p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .hero-banner p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    margin-top: 8px;
+  }
+  .hero-search { margin-top: 20px; }
+  .hero-cta {
+    margin-top: 16px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 999px;
+    padding: 9px 18px;
+    cursor: pointer;
+  }
+  .hero-cta:hover { background: rgba(255,255,255,0.2); }
+  .hero-stats {
+    display: flex;
+    gap: 22px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .hero-stat strong { display: block; font-size: 17px; font-weight: 800; }
+  .hero-stat span { font-size: 11.5px; color: rgba(255,255,255,0.6); }
+
+  .hero-media {
+    border-radius: 16px;
+    overflow: hidden;
+    max-height: 200px;
+  }
+  .hero-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  @media (min-width: 760px) {
+    .hero-banner { padding: 52px 16px; }
+    .hero-flex { flex-direction: row; align-items: center; justify-content: space-between; gap: 40px; }
+    .hero-copy { flex: 1; }
+    .hero-media { flex: 1; max-height: none; height: 280px; }
+    .hero-banner h1 { font-size: 32px; }
+  }
 
   /* Search + filters */
-  .toolbar { margin-bottom: 18px; }
-
   .search-box {
     position: relative;
-    margin-bottom: 12px;
   }
   .search-box .icon {
     position: absolute;
@@ -85,6 +144,7 @@
   }
   .search-box input {
     width: 100%;
+    max-width: 460px;
     padding: 12px 14px 12px 38px;
     font-size: 14px;
     font-family: inherit;
@@ -100,6 +160,7 @@
     box-shadow: 0 0 0 3px rgba(231,112,76,0.18);
   }
 
+  .toolbar { margin-bottom: 14px; }
   .filter-chips {
     display: flex;
     gap: 8px;
@@ -129,6 +190,78 @@
     color: var(--muted);
     margin-bottom: 12px;
   }
+
+  /* Section scaffolding */
+  .section-block { margin: 34px 0; }
+  .section-block:first-child { margin-top: 26px; }
+  .section-title {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 3px;
+    margin-bottom: 16px;
+  }
+
+  /* Category tiles */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .category-card {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    height: 130px;
+    cursor: pointer;
+    transition: transform 0.15s;
+    border: 1px solid var(--line);
+  }
+  .category-card:hover { transform: translateY(-2px); }
+  .category-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .category-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.72) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12px;
+    color: #fff;
+  }
+  .category-title { font-size: 15px; font-weight: 700; }
+  .category-count { font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 2px; }
+
+  /* Perks */
+  .perks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  .perk-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .perk-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(231,112,76,0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  .perk-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .perk-sub { font-size: 12.5px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
 
   /* Job grid + cards */
   .job-grid {
@@ -256,6 +389,113 @@
     color: var(--accent);
     white-space: nowrap;
   }
+
+  /* Steps */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  .step-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .step-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .step-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .step-sub { font-size: 12.5px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+  /* Testimonials */
+  .testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .testimonial-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .stars { color: #f59e0b; font-size: 13px; letter-spacing: 2px; margin-bottom: 10px; }
+  .testimonial-quote { font-size: 13.5px; color: var(--text); line-height: 1.6; }
+  .testimonial-person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .testimonial-person img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+  .tp-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .tp-role { font-size: 11.5px; color: var(--muted); }
+
+  /* Footer */
+  .site-footer {
+    border-top: 1px solid var(--line);
+    background: var(--card);
+    padding: 30px 16px 22px;
+  }
+  .footer-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .footer-brand { display: flex; align-items: center; gap: 8px; }
+  .footer-brand-mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .footer-brand span { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .footer-blurb {
+    font-size: 12.5px;
+    color: var(--muted);
+    max-width: 440px;
+    line-height: 1.6;
+    margin-top: 12px;
+  }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .footer-links a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .footer-links a:hover { color: var(--ink); }
 
   /* Detail view */
   .back-btn {
@@ -426,10 +666,6 @@
     color: var(--muted);
     font-size: 14px;
   }
-
-  @media (min-width: 640px) {
-    .hero h1 { font-size: 28px; }
-  }
 </style>
 </head>
 <body>
@@ -448,90 +684,233 @@
   <span class="header-title">Jobs</span>
 </header>
 
-<div class="container">
+<!-- ── List view ── -->
+<div id="listView">
 
-  <!-- ── List view ── -->
-  <div id="listView">
-    <div class="hero">
-      <h1>Find your next job</h1>
-      <p>Tap a job to see details and apply in under a minute</p>
-    </div>
-
-    <div class="toolbar">
-      <div class="search-box">
-        <span class="icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Search by title or location" oninput="applyFilters()">
-      </div>
-      <div class="filter-chips" id="filterChips"></div>
-    </div>
-
-    <div class="result-count" id="resultCount" style="display:none;"></div>
-    <div id="jobList">
-      <div class="loading-state">Loading open positions…</div>
-    </div>
-  </div>
-
-  <!-- ── Detail view ── -->
-  <div id="detailView" style="display:none;">
-    <button class="back-btn" onclick="showList()">← All jobs</button>
-    <div class="detail-card">
-      <div class="detail-title" id="dTitle"></div>
-      <div class="detail-rows" id="dRows"></div>
-      <div class="jd-label">Job description</div>
-      <div class="jd-text" id="dJd"></div>
-      <button class="primary-btn" onclick="showApply()">Apply now</button>
-    </div>
-  </div>
-
-  <!-- ── Apply view ── -->
-  <div id="applyView" style="display:none;">
-    <button class="back-btn" onclick="showDetail(currentJob)">← Back to job</button>
-    <div class="detail-card">
-      <div class="detail-title" style="font-size:18px;">Apply — <span id="aJobTitle"></span></div>
-      <div class="form-sub">Fill in your details and we'll be in touch on WhatsApp</div>
-
-      <div class="field">
-        <label for="fullName">Full name</label>
-        <input type="text" id="fullName" placeholder="e.g. Ramesh Kumar">
-        <div class="field-error" id="err-fullName">Please enter your name</div>
-      </div>
-
-      <div class="field">
-        <label for="email">Email</label>
-        <input type="email" id="email" placeholder="you@example.com">
-        <div class="field-error" id="err-email">Please enter your email</div>
-      </div>
-
-      <div class="field">
-        <label for="mobNo">Mobile number</label>
-        <div class="phone-group">
-          <span class="phone-prefix">+91</span>
-          <input type="tel" id="mobNo" placeholder="9999999999" inputmode="numeric">
+  <section class="hero-banner">
+    <div class="hero-flex">
+      <div class="hero-copy">
+        <span class="hero-badge">🎧 We're hiring — Voice, Non-Voice &amp; Chat roles</span>
+        <h1>Find your next job in customer support</h1>
+        <p>Apply in under a minute. Get a callback within 24 hours.</p>
+        <div class="hero-search search-box">
+          <span class="icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search by title or location" oninput="applyFilters()">
         </div>
-        <div class="field-error" id="err-mobNo">Enter a valid 10-digit mobile number</div>
+        <div class="hero-stats">
+          <div class="hero-stat"><strong id="heroJobCount">–</strong><span>Open roles</span></div>
+          <div class="hero-stat"><strong>24 hrs</strong><span>Callback time</span></div>
+          <div class="hero-stat"><strong>Weekly</strong><span>Payouts</span></div>
+        </div>
+        <button class="hero-cta" type="button" onclick="scrollToJobs()">Explore open roles ↓</button>
+      </div>
+      <div class="hero-media">
+        <img src="https://picsum.photos/seed/mopid-hero/900/600" alt="Customer support team at work" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+
+    <section class="section-block" id="categoriesSection" style="display:none;">
+      <div class="section-title">Browse by job type</div>
+      <div class="section-sub">Pick a category to see matching roles</div>
+      <div class="category-grid" id="categoryGrid"></div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-title">Why join us</div>
+      <div class="section-sub">A few reasons our team sticks around</div>
+      <div class="perks-grid">
+        <div class="perk-card">
+          <div class="perk-icon">💸</div>
+          <div class="perk-title">Weekly payouts</div>
+          <div class="perk-sub">Get paid every week, straight to your bank account.</div>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon">⚡</div>
+          <div class="perk-title">Fast hiring</div>
+          <div class="perk-sub">Apply today, get a callback within 24 hours.</div>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon">🎓</div>
+          <div class="perk-title">No experience needed</div>
+          <div class="perk-sub">Paid training gets you job-ready from day one.</div>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon">📍</div>
+          <div class="perk-title">Work near home</div>
+          <div class="perk-sub">Roles across multiple locations — pick what's closest.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block" id="jobsSection">
+      <div class="section-title">Open positions</div>
+      <div class="section-sub">Tap a job to see details and apply</div>
+
+      <div class="toolbar">
+        <div class="filter-chips" id="filterChips"></div>
       </div>
 
-      <button class="primary-btn" id="submitBtn" onclick="submitApplication()">Submit application</button>
-      <div class="error-box" id="applyError"></div>
-    </div>
-  </div>
+      <div class="result-count" id="resultCount" style="display:none;"></div>
+      <div id="jobList">
+        <div class="loading-state">Loading open positions…</div>
+      </div>
+    </section>
 
-  <!-- ── Success view ── -->
-  <div id="successView" style="display:none;">
-    <div class="success-wrap">
-      <div class="success-icon">✓</div>
-      <h2>Application submitted!</h2>
-      <p id="successText">Our team will reach out to you soon.</p>
-      <button class="primary-btn" style="max-width:280px;margin:24px auto 0;" onclick="showList()">Browse more jobs</button>
-    </div>
-  </div>
+    <section class="section-block">
+      <div class="section-title">How hiring works</div>
+      <div class="section-sub">From application to offer letter in four simple steps</div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-title">Browse &amp; apply</div>
+          <div class="step-sub">Pick a role that fits and apply in under a minute.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-title">Get a call</div>
+          <div class="step-sub">Our team calls you within 24 hours to confirm details.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-title">Quick interview</div>
+          <div class="step-sub">A short call or in-person round — no lengthy process.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-title">Get hired</div>
+          <div class="step-sub">Receive your offer and join the team that week.</div>
+        </div>
+      </div>
+    </section>
 
+    <section class="section-block">
+      <div class="section-title">What our team says</div>
+      <div class="section-sub">Real feedback from people who joined through this page</div>
+      <div class="testimonial-grid">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"I applied on a Monday and was on the floor by Thursday. The team made the whole process easy."</p>
+          <div class="testimonial-person">
+            <img src="https://i.pravatar.cc/80?img=32" alt="Priya S.">
+            <div>
+              <div class="tp-name">Priya S.</div>
+              <div class="tp-role">Voice Support Executive</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"No prior BPO experience, but the training got me confident on calls within a week."</p>
+          <div class="testimonial-person">
+            <img src="https://i.pravatar.cc/80?img=51" alt="Arjun K.">
+            <div>
+              <div class="tp-name">Arjun K.</div>
+              <div class="tp-role">Non-Voice Associate</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"Weekly payouts and a manager who actually picks up the phone. Best support job I've had."</p>
+          <div class="testimonial-person">
+            <img src="https://i.pravatar.cc/80?img=45" alt="Sneha R.">
+            <div>
+              <div class="tp-name">Sneha R.</div>
+              <div class="tp-role">Voice + Chat Executive</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
 </div>
+
+<!-- ── Detail view ── -->
+<div id="detailView" class="container" style="display:none;">
+  <button class="back-btn" onclick="showList()">← All jobs</button>
+  <div class="detail-card">
+    <div class="detail-title" id="dTitle"></div>
+    <div class="detail-rows" id="dRows"></div>
+    <div class="jd-label">Job description</div>
+    <div class="jd-text" id="dJd"></div>
+    <button class="primary-btn" onclick="showApply()">Apply now</button>
+  </div>
+</div>
+
+<!-- ── Apply view ── -->
+<div id="applyView" class="container" style="display:none;">
+  <button class="back-btn" onclick="showDetail(currentJob)">← Back to job</button>
+  <div class="detail-card">
+    <div class="detail-title" style="font-size:18px;">Apply — <span id="aJobTitle"></span></div>
+    <div class="form-sub">Fill in your details and we'll be in touch on WhatsApp</div>
+
+    <div class="field">
+      <label for="fullName">Full name</label>
+      <input type="text" id="fullName" placeholder="e.g. Ramesh Kumar">
+      <div class="field-error" id="err-fullName">Please enter your name</div>
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="you@example.com">
+      <div class="field-error" id="err-email">Please enter your email</div>
+    </div>
+
+    <div class="field">
+      <label for="mobNo">Mobile number</label>
+      <div class="phone-group">
+        <span class="phone-prefix">+91</span>
+        <input type="tel" id="mobNo" placeholder="9999999999" inputmode="numeric">
+      </div>
+      <div class="field-error" id="err-mobNo">Enter a valid 10-digit mobile number</div>
+    </div>
+
+    <button class="primary-btn" id="submitBtn" onclick="submitApplication()">Submit application</button>
+    <div class="error-box" id="applyError"></div>
+  </div>
+</div>
+
+<!-- ── Success view ── -->
+<div id="successView" class="container" style="display:none;">
+  <div class="success-wrap">
+    <div class="success-icon">✓</div>
+    <h2>Application submitted!</h2>
+    <p id="successText">Our team will reach out to you soon.</p>
+    <button class="primary-btn" style="max-width:280px;margin:24px auto 0;" onclick="showList()">Browse more jobs</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-brand-mark">M</span>
+      <span>Mopid</span>
+    </div>
+    <p class="footer-blurb">Mopid connects support talent with fast-growing teams. This page lists our own open roles across Voice, Non-Voice and Chat support.</p>
+    <div class="footer-bottom">
+      <span>© 2026 Mopid. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="mailto:careers@mopid.me">careers@mopid.me</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
 <script>
   let jobs = [];
   let currentJob = null;
   let activeType = "All";
+
+  const categoryImages = {
+    "Voice": "https://picsum.photos/seed/mopid-voice/500/360",
+    "Non-Voice": "https://picsum.photos/seed/mopid-nonvoice/500/360",
+    "Voice + Chat": "https://picsum.photos/seed/mopid-voicechat/500/360"
+  };
+  const defaultCategoryImage = "https://picsum.photos/seed/mopid-support/500/360";
 
   const views = ["listView", "detailView", "applyView", "successView"];
   function show(id) {
@@ -542,7 +921,10 @@
   }
   function showList() { show("listView"); }
 
-  function esc(s) { return String(s || ""); }
+  function scrollToJobs() {
+    const el = document.getElementById("jobsSection");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   function timeAgo(iso) {
     if (!iso) return "";
@@ -613,6 +995,8 @@
         return;
       }
       jobs = data;
+      document.getElementById("heroJobCount").textContent = jobs.length;
+      renderCategories();
       renderChips();
       applyFilters();
     } catch (err) {
@@ -624,7 +1008,57 @@
     }
   }
 
+  // ── Categories ──
+  function renderCategories() {
+    const section = document.getElementById("categoriesSection");
+    const wrap = document.getElementById("categoryGrid");
+    wrap.innerHTML = "";
+
+    const counts = {};
+    jobs.forEach(function (job) {
+      if (!job.job_type) return;
+      counts[job.job_type] = (counts[job.job_type] || 0) + 1;
+    });
+
+    const types = Object.keys(counts);
+    if (!types.length) { section.style.display = "none"; return; }
+    section.style.display = "block";
+
+    types.forEach(function (type) {
+      const tile = document.createElement("div");
+      tile.className = "category-card";
+      tile.onclick = function () { selectType(type, true); };
+
+      const img = document.createElement("img");
+      img.src = categoryImages[type] || defaultCategoryImage;
+      img.alt = type;
+      img.loading = "lazy";
+      tile.appendChild(img);
+
+      const overlay = document.createElement("div");
+      overlay.className = "category-overlay";
+      const title = document.createElement("div");
+      title.className = "category-title";
+      title.textContent = type;
+      overlay.appendChild(title);
+      const count = document.createElement("div");
+      count.className = "category-count";
+      count.textContent = counts[type] + (counts[type] === 1 ? " opening" : " openings");
+      overlay.appendChild(count);
+      tile.appendChild(overlay);
+
+      wrap.appendChild(tile);
+    });
+  }
+
   // ── Filters ──
+  function selectType(type, scroll) {
+    activeType = type;
+    renderChips();
+    applyFilters();
+    if (scroll) scrollToJobs();
+  }
+
   function renderChips() {
     const wrap = document.getElementById("filterChips");
     wrap.innerHTML = "";
@@ -642,11 +1076,7 @@
       chip.type = "button";
       chip.className = "filter-chip" + (type === activeType ? " active" : "");
       chip.textContent = type;
-      chip.onclick = function () {
-        activeType = type;
-        renderChips();
-        applyFilters();
-      };
+      chip.onclick = function () { selectType(type, false); };
       wrap.appendChild(chip);
     });
   }

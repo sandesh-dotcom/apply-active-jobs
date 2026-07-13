@@ -93,28 +93,34 @@
     color: rgba(255,255,255,0.75);
     margin-top: 8px;
   }
-  .hero-search { margin-top: 20px; }
-  .hero-cta {
-    margin-top: 16px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 700;
-    color: #fff;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 999px;
-    padding: 11px 20px;
-    cursor: pointer;
-  }
-  .hero-cta:hover { background: rgba(255,255,255,0.2); }
   .hero-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
-    margin-top: 20px;
+    margin-top: 22px;
   }
   .hero-stat strong { display: block; font-size: 17px; font-weight: 800; }
   .hero-stat span { font-size: 11.5px; color: rgba(255,255,255,0.6); }
+
+  .hero-cta {
+    margin-top: 26px;
+    display: inline-block;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    background: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 16px 34px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .hero-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+  }
 
   .hero-media {
     border-radius: 16px;
@@ -156,37 +162,7 @@
     white-space: nowrap;
   }
 
-  /* Search + filters */
-  .search-box {
-    position: relative;
-  }
-  .search-box .icon {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 15px;
-    color: var(--muted);
-    pointer-events: none;
-  }
-  .search-box input {
-    width: 100%;
-    max-width: 460px;
-    padding: 13px 14px 13px 38px;
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--ink);
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-  }
-  .search-box input::placeholder { color: #94a3b8; }
-  .search-box input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(231,112,76,0.18);
-  }
-
+  /* Filters */
   .toolbar { margin-bottom: 14px; }
   .filter-chips {
     display: flex;
@@ -279,6 +255,7 @@
     transition: border-color 0.15s, transform 0.15s;
   }
   .location-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .location-card.active { border-color: var(--accent); background: rgba(231,112,76,0.06); }
   .location-pin { font-size: 18px; margin-bottom: 8px; }
   .location-name { font-size: 13.5px; font-weight: 700; color: var(--ink); }
   .location-count { font-size: 12px; color: var(--muted); margin-top: 2px; }
@@ -769,13 +746,9 @@
   <section class="hero-banner">
     <div class="hero-flex">
       <div class="hero-copy">
-        <span class="hero-badge">🎧 We're hiring — Voice, Non-Voice &amp; Chat roles</span>
-        <h1>Find your next job in customer support</h1>
+        <span class="hero-badge">🚀 We're hiring across multiple industries</span>
+        <h1>Find your next job</h1>
         <p>Apply in under a minute. Get a callback within 24 hours.</p>
-        <div class="hero-search search-box">
-          <span class="icon">🔍</span>
-          <input type="text" id="searchInput" placeholder="Search by title or location" oninput="applyFilters()">
-        </div>
         <div class="hero-stats">
           <div class="hero-stat"><strong id="heroJobCount">–</strong><span>Open roles</span></div>
           <div class="hero-stat"><strong>24 hrs</strong><span>Callback time</span></div>
@@ -784,7 +757,7 @@
         <button class="hero-cta" type="button" onclick="scrollToJobs()">Explore open roles ↓</button>
       </div>
       <div class="hero-media">
-        <img src="https://picsum.photos/seed/mopid-hero/900/600" alt="Customer support team at work" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=70" alt="Team working together in an office" loading="lazy">
       </div>
     </div>
   </section>
@@ -807,8 +780,8 @@
     </section>
 
     <section class="section-block" id="locationsSection" style="display:none;">
-      <div class="section-title">Hiring across these locations</div>
-      <div class="section-sub">Tap a location to see roles near you</div>
+      <div class="section-title">Hiring across these cities</div>
+      <div class="section-sub">Tap a city to see roles there</div>
       <div class="location-grid" id="locationGrid"></div>
     </section>
 
@@ -886,7 +859,7 @@
       <div class="faq-list">
         <details class="faq-item">
           <summary class="faq-question">Do I need prior experience to apply?</summary>
-          <div class="faq-answer">No — most roles include training, so you can apply even without prior BPO experience.</div>
+          <div class="faq-answer">No — most roles include training, so you can apply even without prior experience in the field.</div>
         </details>
         <details class="faq-item">
           <summary class="faq-question">How soon will I hear back after applying?</summary>
@@ -902,7 +875,7 @@
         </details>
         <details class="faq-item">
           <summary class="faq-question">Can I choose a location near me?</summary>
-          <div class="faq-answer">Yes — we hire across multiple locations. Check "Hiring across these locations" above to find one near you.</div>
+          <div class="faq-answer">Yes — we hire across multiple cities. Check "Hiring across these cities" above to find one near you.</div>
         </details>
         <details class="faq-item">
           <summary class="faq-question">Are there any fees to apply or get hired?</summary>
@@ -917,34 +890,34 @@
       <div class="testimonial-grid">
         <div class="testimonial-card">
           <div class="stars">★★★★★</div>
-          <p class="testimonial-quote">"I applied on a Monday and was on the floor by Thursday. The team made the whole process easy."</p>
+          <p class="testimonial-quote">"I applied on a Monday and started my new role by Thursday. The team made the whole process easy."</p>
           <div class="testimonial-person">
             <img src="https://i.pravatar.cc/80?img=32" alt="Priya S.">
             <div>
               <div class="tp-name">Priya S.</div>
-              <div class="tp-role">Voice Support Executive</div>
+              <div class="tp-role">Sales Executive</div>
             </div>
           </div>
         </div>
         <div class="testimonial-card">
           <div class="stars">★★★★★</div>
-          <p class="testimonial-quote">"No prior BPO experience, but the training got me confident on calls within a week."</p>
+          <p class="testimonial-quote">"No prior experience in the field, but the training got me confident within a week."</p>
           <div class="testimonial-person">
             <img src="https://i.pravatar.cc/80?img=51" alt="Arjun K.">
             <div>
               <div class="tp-name">Arjun K.</div>
-              <div class="tp-role">Non-Voice Associate</div>
+              <div class="tp-role">Operations Associate</div>
             </div>
           </div>
         </div>
         <div class="testimonial-card">
           <div class="stars">★★★★★</div>
-          <p class="testimonial-quote">"Weekly payouts and a manager who actually picks up the phone. Best support job I've had."</p>
+          <p class="testimonial-quote">"Weekly payouts and a manager who actually picks up the phone. Best job I've had."</p>
           <div class="testimonial-person">
             <img src="https://i.pravatar.cc/80?img=45" alt="Sneha R.">
             <div>
               <div class="tp-name">Sneha R.</div>
-              <div class="tp-role">Voice + Chat Executive</div>
+              <div class="tp-role">Team Lead</div>
             </div>
           </div>
         </div>
@@ -1015,7 +988,7 @@
       <span class="footer-brand-mark">M</span>
       <span>Mopid</span>
     </div>
-    <p class="footer-blurb">Mopid connects support talent with fast-growing teams. This page lists our own open roles across Voice, Non-Voice and Chat support.</p>
+    <p class="footer-blurb">Mopid connects talent with fast-growing teams. This page lists our open roles across multiple industries and functions.</p>
     <div class="footer-bottom">
       <span>© 2026 Mopid. All rights reserved.</span>
       <div class="footer-links">
@@ -1029,13 +1002,23 @@
   let jobs = [];
   let currentJob = null;
   let activeType = "All";
+  let activeCity = "All";
+
+  // Reduces a full address like "HSR Layout, Bangalore" down to the city
+  // ("Bangalore") so the locations section groups by city, not every town.
+  function extractCity(location) {
+    const loc = (location || "").trim();
+    if (!loc) return "";
+    const parts = loc.split(",");
+    return parts[parts.length - 1].trim();
+  }
 
   const categoryImages = {
-    "Voice": "https://picsum.photos/seed/mopid-voice/500/360",
-    "Non-Voice": "https://picsum.photos/seed/mopid-nonvoice/500/360",
-    "Voice + Chat": "https://picsum.photos/seed/mopid-voicechat/500/360"
+    "Voice": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=500&q=65",
+    "Non-Voice": "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=500&q=65",
+    "Voice + Chat": "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=500&q=65"
   };
-  const defaultCategoryImage = "https://picsum.photos/seed/mopid-support/500/360";
+  const defaultCategoryImage = "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=500&q=65";
 
   const views = ["listView", "detailView", "applyView", "successView"];
   function show(id) {
@@ -1177,7 +1160,7 @@
     });
   }
 
-  // ── Locations ──
+  // ── Locations (grouped by city, e.g. "HSR Layout, Bangalore" → "Bangalore") ──
   function renderLocations() {
     const section = document.getElementById("locationsSection");
     const wrap = document.getElementById("locationGrid");
@@ -1185,19 +1168,19 @@
 
     const counts = {};
     jobs.forEach(function (job) {
-      const loc = (job.location || "").trim();
-      if (!loc) return;
-      counts[loc] = (counts[loc] || 0) + 1;
+      const city = extractCity(job.location);
+      if (!city) return;
+      counts[city] = (counts[city] || 0) + 1;
     });
 
-    const locations = Object.keys(counts);
-    if (!locations.length) { section.style.display = "none"; return; }
+    const cities = Object.keys(counts);
+    if (!cities.length) { section.style.display = "none"; return; }
     section.style.display = "block";
 
-    locations.forEach(function (loc) {
+    cities.forEach(function (city) {
       const tile = document.createElement("div");
-      tile.className = "location-card";
-      tile.onclick = function () { selectLocation(loc); };
+      tile.className = "location-card" + (city === activeCity ? " active" : "");
+      tile.onclick = function () { selectCity(city); };
 
       const pin = document.createElement("div");
       pin.className = "location-pin";
@@ -1206,22 +1189,21 @@
 
       const name = document.createElement("div");
       name.className = "location-name";
-      name.textContent = loc;
+      name.textContent = city;
       tile.appendChild(name);
 
       const count = document.createElement("div");
       count.className = "location-count";
-      count.textContent = counts[loc] + (counts[loc] === 1 ? " opening" : " openings");
+      count.textContent = counts[city] + (counts[city] === 1 ? " opening" : " openings");
       tile.appendChild(count);
 
       wrap.appendChild(tile);
     });
   }
 
-  function selectLocation(loc) {
-    activeType = "All";
-    document.getElementById("searchInput").value = loc;
-    renderChips();
+  function selectCity(city) {
+    activeCity = activeCity === city ? "All" : city;
+    renderLocations();
     applyFilters();
     scrollToJobs();
   }
@@ -1257,12 +1239,10 @@
   }
 
   function applyFilters() {
-    const q = document.getElementById("searchInput").value.trim().toLowerCase();
     const filtered = jobs.filter(function (job) {
       if (activeType !== "All" && job.job_type !== activeType) return false;
-      if (!q) return true;
-      const haystack = (job.title + " " + (job.location || "")).toLowerCase();
-      return haystack.indexOf(q) !== -1;
+      if (activeCity !== "All" && extractCity(job.location) !== activeCity) return false;
+      return true;
     });
     renderList(filtered);
   }
@@ -1290,7 +1270,7 @@
       list.className = "";
       const div = document.createElement("div");
       div.className = "empty-state";
-      div.textContent = "No jobs match your search. Try a different filter.";
+      div.textContent = "No jobs match this filter. Try a different one.";
       list.appendChild(div);
       return;
     }

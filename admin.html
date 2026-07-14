@@ -343,9 +343,26 @@
 
     <div class="grid-2">
       <div class="field">
-        <label for="jLocation">Location</label>
-        <input type="text" id="jLocation" placeholder="e.g. HSR Layout, Bangalore">
+        <label for="jState">State</label>
+        <select id="jState">
+          <option value="">Select state…</option>
+        </select>
       </div>
+      <div class="field">
+        <label for="jCity">City</label>
+        <select id="jCity">
+          <option value="">Select state first…</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="jArea">Area / locality <span class="hint">(optional, type freely — suggestions shown for the selected city)</span></label>
+      <input type="text" id="jArea" list="areaSuggestions" placeholder="e.g. HSR Layout">
+      <datalist id="areaSuggestions"></datalist>
+    </div>
+
+    <div class="grid-2">
       <div class="field">
         <label for="jMode">Mode</label>
         <select id="jMode">
@@ -354,9 +371,6 @@
           <option value="Hybrid">Hybrid</option>
         </select>
       </div>
-    </div>
-
-    <div class="grid-2">
       <div class="field">
         <label for="jType">Job type</label>
         <select id="jType">
@@ -365,15 +379,17 @@
           <option value="Voice + Chat">Voice + Chat</option>
         </select>
       </div>
+    </div>
+
+    <div class="grid-2">
       <div class="field">
         <label for="jSalary">Salary <span class="hint">(shown with ₹)</span></label>
         <input type="text" id="jSalary" placeholder="e.g. 18,000 – 22,000 / month">
       </div>
-    </div>
-
-    <div class="field">
-      <label for="jLanguages">Languages needed <span class="hint">(comma separated)</span></label>
-      <input type="text" id="jLanguages" placeholder="e.g. English, Hindi">
+      <div class="field">
+        <label for="jLanguages">Languages needed <span class="hint">(comma separated)</span></label>
+        <input type="text" id="jLanguages" placeholder="e.g. English, Hindi">
+      </div>
     </div>
 
     <div class="field">
@@ -408,6 +424,107 @@
 </div>
 
 <script>
+  // India states/UTs -> major cities. Curated, not exhaustive.
+  const STATE_CITIES = {
+    "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Tirupati", "Kurnool"],
+    "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat"],
+    "Assam": ["Guwahati", "Dibrugarh", "Silchar", "Jorhat", "Tezpur"],
+    "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Darbhanga"],
+    "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba", "Durg"],
+    "Goa": ["Panaji", "Margao", "Vasco da Gama"],
+    "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Gandhinagar"],
+    "Haryana": ["Gurugram", "Faridabad", "Panipat", "Ambala", "Hisar", "Rohtak"],
+    "Himachal Pradesh": ["Shimla", "Dharamshala", "Solan", "Mandi"],
+    "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro"],
+    "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi", "Belagavi", "Davanagere"],
+    "Kerala": ["Kochi", "Thiruvananthapuram", "Kozhikode", "Thrissur", "Kollam"],
+    "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain"],
+    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Thane"],
+    "Manipur": ["Imphal"],
+    "Meghalaya": ["Shillong"],
+    "Mizoram": ["Aizawl"],
+    "Nagaland": ["Kohima", "Dimapur"],
+    "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur"],
+    "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Mohali"],
+    "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer"],
+    "Sikkim": ["Gangtok"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+    "Telangana": ["Hyderabad", "Warangal", "Nizamabad"],
+    "Tripura": ["Agartala"],
+    "Uttar Pradesh": ["Lucknow", "Noida", "Kanpur", "Ghaziabad", "Agra", "Varanasi", "Meerut"],
+    "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Nainital"],
+    "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Siliguri", "Asansol"],
+    "Andaman and Nicobar Islands": ["Port Blair"],
+    "Chandigarh": ["Chandigarh"],
+    "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Silvassa"],
+    "Delhi": ["New Delhi"],
+    "Jammu and Kashmir": ["Srinagar", "Jammu"],
+    "Ladakh": ["Leh"],
+    "Lakshadweep": ["Kavaratti"],
+    "Puducherry": ["Puducherry"]
+  };
+
+  // Illustrative locality suggestions for common metros — the Area field stays
+  // free text everywhere else, this only feeds the <datalist> autocomplete.
+  const CITY_LOCALITIES = {
+    "Bengaluru": ["HSR Layout", "Koramangala", "Whitefield", "Electronic City", "Indiranagar", "Marathahalli", "BTM Layout", "Jayanagar"],
+    "Mumbai": ["Andheri", "Bandra", "Powai", "Malad", "Thane", "Navi Mumbai", "Borivali"],
+    "New Delhi": ["Connaught Place", "Dwarka", "Saket", "Karol Bagh", "Rohini"],
+    "Hyderabad": ["Hitech City", "Gachibowli", "Madhapur", "Kondapur", "Secunderabad"],
+    "Pune": ["Hinjewadi", "Kharadi", "Baner", "Viman Nagar", "Wakad"],
+    "Chennai": ["OMR", "Anna Nagar", "Velachery", "T Nagar", "Guindy"],
+    "Kolkata": ["Salt Lake", "Park Street", "New Town", "Rajarhat"],
+    "Gurugram": ["Cyber City", "Sohna Road", "Sector 29", "DLF Phase 2"],
+    "Noida": ["Sector 62", "Sector 18", "Sector 63", "Greater Noida"],
+    "Ahmedabad": ["Satellite", "Vastrapur", "SG Highway", "Bopal"]
+  };
+
+  function populateStates() {
+    const sel = document.getElementById("jState");
+    Object.keys(STATE_CITIES).sort().forEach(function (state) {
+      const opt = document.createElement("option");
+      opt.value = state;
+      opt.textContent = state;
+      sel.appendChild(opt);
+    });
+  }
+
+  function populateCities(state, selectedCity) {
+    const sel = document.getElementById("jCity");
+    sel.innerHTML = "";
+    const cities = STATE_CITIES[state] || [];
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = cities.length ? "Select city…" : "Select state first…";
+    sel.appendChild(placeholder);
+    cities.forEach(function (city) {
+      const opt = document.createElement("option");
+      opt.value = city;
+      opt.textContent = city;
+      sel.appendChild(opt);
+    });
+    sel.value = selectedCity && cities.indexOf(selectedCity) !== -1 ? selectedCity : "";
+    populateAreaSuggestions(sel.value);
+  }
+
+  function populateAreaSuggestions(city) {
+    const list = document.getElementById("areaSuggestions");
+    list.innerHTML = "";
+    (CITY_LOCALITIES[city] || []).forEach(function (area) {
+      const opt = document.createElement("option");
+      opt.value = area;
+      list.appendChild(opt);
+    });
+  }
+
+  populateStates();
+  document.getElementById("jState").addEventListener("change", function () {
+    populateCities(this.value);
+  });
+  document.getElementById("jCity").addEventListener("change", function () {
+    populateAreaSuggestions(this.value);
+  });
+
   let auth = sessionStorage.getItem("mopid_admin_auth") || null;
 
   function authHeader() {
@@ -624,7 +741,9 @@
     editingId = job.id;
     document.getElementById("jTitle").value = job.title || "";
     document.getElementById("jUuid").value = job.job_uuid || "";
-    document.getElementById("jLocation").value = job.location || "";
+    document.getElementById("jState").value = job.state || "";
+    populateCities(job.state || "", job.city || "");
+    document.getElementById("jArea").value = job.area || (!job.state && !job.city ? (job.location || "") : "");
     document.getElementById("jMode").value = job.mode || "In Office";
     document.getElementById("jType").value = job.job_type || "Voice";
     document.getElementById("jSalary").value = job.salary || "";
@@ -640,9 +759,11 @@
 
   function cancelEdit() {
     editingId = null;
-    ["jTitle","jUuid","jLocation","jSalary","jLanguages","jMap","jJd"].forEach(function (id) {
+    ["jTitle","jUuid","jArea","jSalary","jLanguages","jMap","jJd"].forEach(function (id) {
       document.getElementById(id).value = "";
     });
+    document.getElementById("jState").value = "";
+    populateCities("");
     document.getElementById("jMode").value = "In Office";
     document.getElementById("jType").value = "Voice";
     document.getElementById("formTitle").textContent = "Add a new job";
@@ -652,10 +773,16 @@
 
   async function saveJob() {
     const errId = "addError";
+    const state = document.getElementById("jState").value;
+    const city = document.getElementById("jCity").value;
+    const area = document.getElementById("jArea").value.trim();
     const job = {
       title: document.getElementById("jTitle").value.trim(),
       job_uuid: document.getElementById("jUuid").value.trim(),
-      location: document.getElementById("jLocation").value.trim(),
+      state: state,
+      city: city,
+      area: area,
+      location: area ? (area + ", " + city) : city,
       mode: document.getElementById("jMode").value,
       job_type: document.getElementById("jType").value,
       salary: document.getElementById("jSalary").value.trim(),
@@ -666,6 +793,10 @@
 
     if (!job.title || !job.job_uuid) {
       showBox(errId, "Job title and ATS Job Id are required.");
+      return;
+    }
+    if (!state || !city) {
+      showBox(errId, "Please select a state and city.");
       return;
     }
     if (job.map_link && !/^https?:\/\//i.test(job.map_link)) {

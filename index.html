@@ -1006,11 +1006,17 @@
 
   // Reduces a full address like "HSR Layout, Bangalore" down to the city
   // ("Bangalore") so the locations section groups by city, not every town.
+  // Used only as a fallback for older jobs saved before the admin's
+  // State/City dropdowns existed — new jobs carry a clean job.city field.
   function extractCity(location) {
     const loc = (location || "").trim();
     if (!loc) return "";
     const parts = loc.split(",");
     return parts[parts.length - 1].trim();
+  }
+
+  function cityOf(job) {
+    return (job.city && job.city.trim()) || extractCity(job.location);
   }
 
   const categoryImages = {
@@ -1168,7 +1174,7 @@
 
     const counts = {};
     jobs.forEach(function (job) {
-      const city = extractCity(job.location);
+      const city = cityOf(job);
       if (!city) return;
       counts[city] = (counts[city] || 0) + 1;
     });
@@ -1241,7 +1247,7 @@
   function applyFilters() {
     const filtered = jobs.filter(function (job) {
       if (activeType !== "All" && job.job_type !== activeType) return false;
-      if (activeCity !== "All" && extractCity(job.location) !== activeCity) return false;
+      if (activeCity !== "All" && cityOf(job) !== activeCity) return false;
       return true;
     });
     renderList(filtered);

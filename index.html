@@ -515,18 +515,7 @@
     margin: 0 auto;
   }
   .footer-brand { display: flex; align-items: center; gap: 8px; }
-  .footer-brand-mark {
-    width: 24px;
-    height: 24px;
-    border-radius: 6px;
-    background: var(--accent);
-    color: #fff;
-    font-weight: 800;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .footer-brand-mark { width: 24px; height: 24px; display: block; }
   .footer-brand span { font-size: 14px; font-weight: 700; color: var(--ink); }
   .footer-blurb {
     font-size: 12.5px;
@@ -985,7 +974,15 @@
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <span class="footer-brand-mark">M</span>
+      <svg class="footer-brand-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 301 301" fill="none" role="img" aria-label="Mopid">
+        <rect x="0.299011" y="0.57251" width="300.131" height="300.131" rx="33.5249" fill="#E7704C"/>
+        <g clip-path="url(#clip0_footer)">
+        <path d="M47.2743 68.0055C46.7236 57.7036 56.1376 57.5064 62.4061 63.4291C76.9625 74.4451 91.4644 85.5359 106.021 96.5586C107.054 97.3406 107.435 98.143 107.435 99.3942C107.313 145.314 107.754 191.255 107.401 237.162C106.66 245.573 96.9919 244.417 92.3007 239.752C79.4985 229.961 66.8186 220.005 53.9552 210.288C46.3473 204.542 47.3357 206.269 47.2337 196.906L47.252 68.0123L47.2743 68.0055Z" fill="#1E1E1E"/>
+        <path d="M255.048 68.0055C255.599 57.7036 246.185 57.5064 239.916 63.4291C225.36 74.4451 210.858 85.5359 196.301 96.5586C195.268 97.3406 194.887 98.143 194.887 99.3942C195.01 145.314 194.568 191.255 194.921 237.162C195.662 245.573 205.33 244.417 210.022 239.752C222.824 229.961 235.504 220.005 248.367 210.288C255.975 204.542 254.987 206.269 255.089 196.906L255.07 68.0123L255.048 68.0055Z" fill="#1E1E1E"/>
+        <path d="M181.805 193.75C181.873 197.994 180.237 200.877 176.946 203.25C169.95 208.296 163.036 213.457 156.074 218.55C152.905 220.869 150.281 220.753 147.147 218.387C140.314 213.232 133.515 208.017 126.553 203.032C123.242 200.659 120.491 198.062 120.518 193.927L120.524 107.566C158.945 132.692 143.404 132.651 181.833 107.568L181.805 193.75Z" fill="#1E1E1E"/>
+        </g>
+        <defs><clipPath id="clip0_footer"><rect width="207.855" height="183.871" fill="white" transform="translate(47.2338 59.499)"/></clipPath></defs>
+      </svg>
       <span>Mopid</span>
     </div>
     <p class="footer-blurb">Mopid connects talent with fast-growing teams. This page lists our open roles across multiple industries and functions.</p>

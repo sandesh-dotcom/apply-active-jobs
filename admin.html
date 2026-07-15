@@ -271,17 +271,63 @@
   .jd-toolbar button:hover { background: var(--line); }
   .jd-toolbar button i { font-style: italic; }
 
+  .jd-editor {
+    width: 100%;
+    min-height: 160px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    line-height: 1.6;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .jd-editor:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(231,112,76,0.18);
+  }
+  .jd-editor:empty:before {
+    content: attr(data-placeholder);
+    color: #94a3b8;
+    pointer-events: none;
+  }
+  .jd-editor div, .jd-editor p { margin: 0 0 8px; }
+  .jd-editor div:last-child, .jd-editor p:last-child { margin-bottom: 0; }
+  .jd-editor ul, .jd-editor ol { margin: 0 0 8px 22px; padding: 0; }
+  .jd-editor li { margin-bottom: 4px; }
+  .jd-editor b, .jd-editor strong { font-weight: 700; }
+
   .empty { font-size: 13px; color: var(--muted); text-align: center; padding: 16px 0; }
 
   .topbar {
     width: 100%;
-    max-width: 560px;
+    max-width: 1120px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
   }
   .topbar .who { font-size: 13px; color: var(--muted); }
+
+  /* Desktop: form and job list side by side instead of one narrow column */
+  .admin-grid {
+    width: 100%;
+    max-width: 1120px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .admin-grid .card { margin-bottom: 0; }
+  @media (min-width: 960px) {
+    .admin-grid { grid-template-columns: 1fr 1fr; }
+    .admin-grid .card { max-width: none; }
+    #formCard { position: sticky; top: 88px; }
+  }
 </style>
 </head>
 <body>
@@ -321,12 +367,14 @@
 </div>
 
 <!-- ── Dashboard ── -->
-<div id="dashboard" style="display:none; width:100%; display:none; flex-direction:column; align-items:center;">
+<div id="dashboard" style="display:none; width:100%; flex-direction:column; align-items:center;">
 
   <div class="topbar">
     <span class="who" id="whoami"></span>
     <button class="logout-btn" onclick="logout()">Log out</button>
   </div>
+
+  <div class="admin-grid">
 
   <div class="card" id="formCard">
     <div class="card-title" id="formTitle">Add a new job</div>
@@ -400,12 +448,12 @@
     <div class="field">
       <label for="jJd">Job description</label>
       <div class="jd-toolbar">
-        <button type="button" onclick="wrapSelection('**','**')" title="Bold"><b>B</b></button>
-        <button type="button" onclick="wrapSelection('*','*')" title="Italic"><i>I</i></button>
-        <button type="button" onclick="prefixLines('- ')" title="Bullet list">• List</button>
-        <button type="button" onclick="prefixLines('1. ')" title="Numbered list">1. List</button>
+        <button type="button" onmousedown="event.preventDefault()" onclick="formatJd('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
+        <button type="button" onmousedown="event.preventDefault()" onclick="formatJd('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+        <button type="button" onmousedown="event.preventDefault()" onclick="formatJd('insertUnorderedList')" title="Bullet list">• List</button>
+        <button type="button" onmousedown="event.preventDefault()" onclick="formatJd('insertOrderedList')" title="Numbered list">1. List</button>
       </div>
-      <textarea id="jJd" placeholder="Role details, shift, requirements, interview process..."></textarea>
+      <div id="jJd" class="jd-editor" contenteditable="true" data-placeholder="Role details, shift, requirements, interview process..."></div>
     </div>
 
     <button class="primary-btn" id="addBtn" onclick="saveJob()">Add job</button>
@@ -417,6 +465,8 @@
   <div class="card">
     <div class="card-title">Live jobs</div>
     <div id="jobRows"><div class="empty">Loading…</div></div>
+  </div>
+
   </div>
 
 </div>
@@ -703,36 +753,112 @@
     });
   }
 
-  // ── Job description formatting toolbar ──
-  function wrapSelection(prefix, suffix) {
-    const ta = document.getElementById("jJd");
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const value = ta.value;
-    const selected = value.slice(start, end) || "text";
-    ta.value = value.slice(0, start) + prefix + selected + suffix + value.slice(end);
-    ta.focus();
-    const cursorStart = start + prefix.length;
-    ta.setSelectionRange(cursorStart, cursorStart + selected.length);
+  // ── Job description rich-text editor ──
+  // Stored/sent as the same lightweight markdown the candidate page already
+  // renders (**bold**, *italic*, "- " bullets, "1. " numbered lists), but
+  // edited as real WYSIWYG rich text instead of raw markdown syntax.
+  function formatJd(command) {
+    document.getElementById("jJd").focus();
+    document.execCommand(command, false, null);
   }
 
-  function prefixLines(prefix) {
-    const ta = document.getElementById("jJd");
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const value = ta.value;
-    const lineStart = value.lastIndexOf("\n", start - 1) + 1;
-    let lineEnd = value.indexOf("\n", end);
-    if (lineEnd === -1) lineEnd = value.length;
-    const block = value.slice(lineStart, lineEnd);
-    let n = 1;
-    const newBlock = block.split("\n").map(function (line) {
-      const stripped = line.replace(/^(\d+\.\s+|-\s+)/, "");
-      return prefix === "1. " ? (n++) + ". " + stripped : prefix + stripped;
-    }).join("\n");
-    ta.value = value.slice(0, lineStart) + newBlock + value.slice(lineEnd);
-    ta.focus();
-    ta.setSelectionRange(lineStart, lineStart + newBlock.length);
+  function jdEscapeHtml(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function jdInlineFormat(s) {
+    return s
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.+?)\*/g, "<em>$1</em>");
+  }
+
+  function jdMarkdownToHtml(raw) {
+    const lines = jdEscapeHtml(raw).split("\n");
+    let html = "";
+    let listType = null;
+
+    function closeList() {
+      if (listType) { html += "</" + listType + ">"; listType = null; }
+    }
+
+    lines.forEach(function (line) {
+      const bullet = line.match(/^-\s+(.*)/);
+      const numbered = line.match(/^\d+\.\s+(.*)/);
+      if (bullet) {
+        if (listType !== "ul") { closeList(); html += "<ul>"; listType = "ul"; }
+        html += "<li>" + jdInlineFormat(bullet[1]) + "</li>";
+      } else if (numbered) {
+        if (listType !== "ol") { closeList(); html += "<ol>"; listType = "ol"; }
+        html += "<li>" + jdInlineFormat(numbered[1]) + "</li>";
+      } else {
+        closeList();
+        if (line.trim() !== "") html += "<div>" + jdInlineFormat(line) + "</div>";
+      }
+    });
+    closeList();
+    return html;
+  }
+
+  function jdInlineToMarkdown(node) {
+    let out = "";
+    node.childNodes.forEach(function (child) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        out += child.textContent;
+      } else if (child.nodeName === "BR") {
+        out += "\n";
+      } else if (child.nodeName === "B" || child.nodeName === "STRONG") {
+        const inner = jdInlineToMarkdown(child);
+        out += inner.trim() ? "**" + inner + "**" : inner;
+      } else if (child.nodeName === "I" || child.nodeName === "EM") {
+        const inner = jdInlineToMarkdown(child);
+        out += inner.trim() ? "*" + inner + "*" : inner;
+      } else {
+        out += jdInlineToMarkdown(child);
+      }
+    });
+    return out;
+  }
+
+  function jdHtmlToMarkdown(root) {
+    const lines = [];
+
+    function walkBlock(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent.trim();
+        if (text) lines.push(text);
+        return;
+      }
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+      if (node.nodeName === "UL" || node.nodeName === "OL") {
+        let n = 1;
+        Array.prototype.forEach.call(node.children, function (li) {
+          if (li.nodeName !== "LI") return;
+          const text = jdInlineToMarkdown(li).replace(/\s*\n\s*/g, " ").trim();
+          if (!text) return;
+          lines.push(node.nodeName === "OL" ? (n++) + ". " + text : "- " + text);
+        });
+        return;
+      }
+      if (node.nodeName === "DIV" || node.nodeName === "P") {
+        jdInlineToMarkdown(node).split("\n").forEach(function (line) {
+          const trimmed = line.trim();
+          if (trimmed) lines.push(trimmed);
+        });
+        return;
+      }
+      if (node.nodeName === "BR") return;
+
+      // Any other wrapper (e.g. a <span> from pasted content) — recurse
+      // into its children as if they were top-level blocks.
+      Array.prototype.forEach.call(node.childNodes, walkBlock);
+    }
+
+    Array.prototype.forEach.call(root.childNodes, walkBlock);
+    return lines.join("\n");
   }
 
   let editingId = null;
@@ -749,7 +875,7 @@
     document.getElementById("jSalary").value = job.salary || "";
     document.getElementById("jLanguages").value = job.languages || "";
     document.getElementById("jMap").value = job.map_link || "";
-    document.getElementById("jJd").value = job.jd || "";
+    document.getElementById("jJd").innerHTML = job.jd ? jdMarkdownToHtml(job.jd) : "";
 
     document.getElementById("formTitle").textContent = "Edit job";
     document.getElementById("addBtn").textContent = "Save changes";
@@ -759,9 +885,10 @@
 
   function cancelEdit() {
     editingId = null;
-    ["jTitle","jUuid","jArea","jSalary","jLanguages","jMap","jJd"].forEach(function (id) {
+    ["jTitle","jUuid","jArea","jSalary","jLanguages","jMap"].forEach(function (id) {
       document.getElementById(id).value = "";
     });
+    document.getElementById("jJd").innerHTML = "";
     document.getElementById("jState").value = "";
     populateCities("");
     document.getElementById("jMode").value = "In Office";
@@ -788,7 +915,7 @@
       salary: document.getElementById("jSalary").value.trim(),
       languages: document.getElementById("jLanguages").value.trim(),
       map_link: document.getElementById("jMap").value.trim(),
-      jd: document.getElementById("jJd").value.trim()
+      jd: jdHtmlToMarkdown(document.getElementById("jJd")).trim()
     };
 
     if (!job.title || !job.job_uuid) {

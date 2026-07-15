@@ -1,8 +1,14 @@
 // POST /api/apply — candidate application.
 // Receives the internal job id, looks up the ATS job_uuid on the server,
 // and pushes the lead to the ATS. The job_uuid never touches the browser.
+//
+// Rate limited to one application per mobile number every 3 days —
+// applying to multiple jobs in a short window causes issues downstream
+// in the ATS, so repeat attempts are rejected before reaching it.
 
 const WEBHOOK_URL = "https://ats.mopid.me/api/v1.0/add-simple-candidate";
+
+const APPLY_COOLDOWN_SECONDS = 3 * 24 * 60 * 60;
 
 const KV_URL =
   process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -15,6 +21,24 @@ async function getJobs() {
   });
   const d = await r.json();
   return d && d.result ? JSON.parse(d.result) : [];
+}
+
+async function getLastApplied(mobile) {
+  const r = await fetch(`${KV_URL}/get/applied:${mobile}`, {
+    headers: { Authorization: `Bearer ${KV_TOKEN}` },
+  });
+  const d = await r.json();
+  return d && d.result ? d.result : null;
+}
+
+// Sets a self-expiring marker (auto-cleared by Redis after the cooldown)
+// so a mobile number can't be used to apply again until it's gone.
+async function markApplied(mobile) {
+  const value = encodeURIComponent(new Date().toISOString());
+  await fetch(
+    `${KV_URL}/set/applied:${mobile}/${value}/EX/${APPLY_COOLDOWN_SECONDS}`,
+    { method: "POST", headers: { Authorization: `Bearer ${KV_TOKEN}` } }
+  );
 }
 
 export default async function handler(req, res) {
@@ -40,6 +64,14 @@ export default async function handler(req, res) {
   const mobile = "91" + digits;
 
   try {
+    const lastApplied = await getLastApplied(mobile);
+    if (lastApplied) {
+      return res.status(429).json({
+        error:
+          "You've already applied to a job in the last 3 days. Please wait before applying again — our team will be in touch soon.",
+      });
+    }
+
     const jobs = await getJobs();
     const job = jobs.find(function (j) { return j.id === job_id; });
     if (!job) {
@@ -68,6 +100,8 @@ export default async function handler(req, res) {
         .status(502)
         .json({ error: "Could not submit your application. Please try again." });
     }
+
+    await markApplied(mobile);
 
     return res.status(200).json({ ok: true, message: text });
   } catch (err) {

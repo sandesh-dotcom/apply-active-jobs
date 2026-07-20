@@ -49,7 +49,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Storage is not configured." });
   }
 
-  const { job_id, first_name, last_name, email, mob_no } = req.body || {};
+  const { job_id, first_name, last_name, email, mob_no, source } = req.body || {};
 
   if (!job_id || !first_name || !email || !mob_no) {
     return res.status(400).json({ error: "Missing required fields." });
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
       last_name: String(last_name || ""),
       email: String(email),
       mob_no: mobile,
-      source: "Career Page",
+      source: String(source || "insta_job_apply"),
     };
 
     const atsRes = await fetch(WEBHOOK_URL, {
